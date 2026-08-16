@@ -723,8 +723,9 @@
         "aff": "The Chinese University of Hong Kong, Shenzhen"
       },
       {
-        "name": "Yiwei Guo",
-        "aff": "Independent Researcher"
+        "name": "Yiwen Guo",
+        "aff": "Independent Researcher",
+        "corresponding": true
       }
     ]
   }

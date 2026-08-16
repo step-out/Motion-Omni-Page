@@ -178,8 +178,12 @@ fetch('manifest.json').then(r => r.json()).then(d => {
     esc(p.title).replace('Motion-Omni', '<span class="brand">Motion-Omni</span>');
   document.getElementById('venue').textContent = p.venue;
   document.getElementById('authors').innerHTML = (p.authors || [])
-    .map(a => `${esc(a.name)}<span style="color:#a4aebc"> (${esc(a.aff)})</span>`)
-    .join(' &nbsp;&middot;&nbsp; ');
+    .map(a => `${esc(a.name)}${a.corresponding ? '<sup>*</sup>' : ''}` +
+              `<span style="color:#a4aebc"> (${esc(a.aff)})</span>`)
+    .join(' &nbsp;&middot;&nbsp; ') +
+    ((p.authors || []).some(a => a.corresponding)
+      ? `<div style="margin-top:7px;font-size:12.5px;color:#8a95a3"><sup>*</sup> Corresponding author</div>`
+      : '');
 
   const L = [
     ['arxiv', 'arXiv', '📄'], ['pdf', 'Paper', '📕'],
