@@ -1,0 +1,731 @@
+{
+  "model": "MotionOmni V1 stage4_joint_finetune_v12/checkpoint-44000",
+  "criteria": "ASR WER <= 5% (5 of 6 exactly 0.0%), manually approved by user",
+  "count": 6,
+  "items": [
+    {
+      "name": "demo1_feedback_to_interns",
+      "sid": "instruct_en_116747_turn2",
+      "question": "What are some effective ways for supervisors to provide constructive feedback to interns?",
+      "answer": "Supervisors can provide constructive feedback by being specific, timely, and respectful, focusing on behavior rather than personality.",
+      "asr_text": "Supervisors can provide constructive feedback by being specific, timely, and respectful, focusing on behavior rather than personality,",
+      "asr_wer": 0.0,
+      "duration_s": 9.2,
+      "words": 17,
+      "longest_still_s": 0.9,
+      "still_frac": 0.284,
+      "video": "demo1_feedback_to_interns.mp4",
+      "assets": [
+        "response.txt",
+        "response.wav",
+        "motion.npz",
+        "motion_codes.npz"
+      ]
+    },
+    {
+      "name": "demo2_extracurricular_activities",
+      "sid": "instruct_en_42992_turn2",
+      "question": "What kind of extra-curricular activities are best for students?",
+      "answer": "For students, extracurricular activities like sports, clubs, and volunteer work can help develop skills like teamwork, leadership, and time management.",
+      "asr_text": "For students, extracurricular activities like sports, clubs, and volunteer work can help develop skills like teamwork, leadership, and time management.",
+      "asr_wer": 0.0,
+      "duration_s": 9.8,
+      "words": 20,
+      "longest_still_s": 1.0,
+      "still_frac": 0.173,
+      "video": "demo2_extracurricular_activities.mp4",
+      "assets": [
+        "response.txt",
+        "response.wav",
+        "motion.npz",
+        "motion_codes.npz"
+      ]
+    },
+    {
+      "name": "demo3_positive_character_traits",
+      "sid": "instruct_en_28941_turn1",
+      "question": "Hey, can you give me a list of, like, five positive character traits?",
+      "answer": "Here are five positive character traits: honesty, empathy, kindness, confidence, and curiosity.",
+      "asr_text": "Here are five positive character traits. Honesty, empathy, kindness, confidence, and curiosity.",
+      "asr_wer": 0.0,
+      "duration_s": 7.7,
+      "words": 12,
+      "longest_still_s": 0.83,
+      "still_frac": 0.24,
+      "video": "demo3_positive_character_traits.mp4",
+      "assets": [
+        "response.txt",
+        "response.wav",
+        "motion.npz",
+        "motion_codes.npz"
+      ]
+    },
+    {
+      "name": "demo4_social_media_frequency",
+      "sid": "instruct_en_65350_turn4",
+      "question": "How often should I post on social media",
+      "answer": "Post on social media at least three times a week to keep your audience engaged and informed.",
+      "asr_text": "Post on social media at least three times a week to keep your audience engaged and informed.",
+      "asr_wer": 0.0,
+      "duration_s": 5.4,
+      "words": 17,
+      "longest_still_s": 0.93,
+      "still_frac": 0.296,
+      "video": "demo4_social_media_frequency.mp4",
+      "assets": [
+        "response.txt",
+        "response.wav",
+        "motion.npz",
+        "motion_codes.npz"
+      ]
+    },
+    {
+      "name": "demo5_social_relationships",
+      "sid": "instruct_en_185851_turn2",
+      "question": "What message do you think the show is trying to convey about social relationships in high school?",
+      "answer": "I think the show is trying to convey that social relationships are complex and can be both positive and negative, and that they can have a significant impact on our mental health and well-being.",
+      "asr_text": "I think the show is trying to convey that social relationships are complex and can be both positive and negative, and that they can have a significant impact on our mental health and well-being.",
+      "asr_wer": 0.0,
+      "duration_s": 10.3,
+      "words": 34,
+      "longest_still_s": 1.17,
+      "still_frac": 0.114,
+      "video": "demo5_social_relationships.mp4",
+      "assets": [
+        "response.txt",
+        "response.wav",
+        "motion.npz",
+        "motion_codes.npz"
+      ]
+    },
+    {
+      "name": "demo6_bruce_wayne",
+      "sid": "instruct_en_191614_turn2",
+      "question": "What triggered the change in Bruce Wayne's personality",
+      "answer": "The change in Bruce Wayne's personality was triggered by his parents' murder, which led to his transformation into Batman.",
+      "asr_text": "The change in Bruce Wentz's personality was triggered by his parents' murder, which led to his transformation into Batman.",
+      "asr_wer": 0.05,
+      "duration_s": 7.8,
+      "words": 19,
+      "longest_still_s": 1.63,
+      "still_frac": 0.281,
+      "video": "demo6_bruce_wayne.mp4",
+      "assets": [
+        "response.txt",
+        "response.wav",
+        "motion.npz",
+        "motion_codes.npz"
+      ]
+    }
+  ],
+  "paper": {
+    "title": "Motion-Omni: End-to-End Joint Speech and Full-Body Motion for Spoken Dialogue",
+    "venue": "Preprint",
+    "arxiv": "",
+    "code": "",
+    "pdf": "",
+    "bibtex": "",
+    "abstract": "An avatar that holds a conversation has to decide what to say and to move while saying it, but these two abilities come from separate families of models: spoken dialogue models return speech but no motion, while co-speech motion models return motion but depend on audio supplied to them rather than deciding what to say. We call a model that produces both from one shared context a <em>spoken motion model</em>, and throughout use <em>motion</em> for co-speech communicative motion: facial expression together with hand, upper-body and lower-body movement. We present <strong>Motion-Omni</strong>, an end-to-end spoken motion framework with three contributions: (i) a unified architecture (Speech Projector, LLM, Speech Generator, Part-Aware Motion Generator) and a four-stage joint training paradigm that co-adapts all components end-to-end; (ii) a model-agnostic data construction pipeline that produces 422,856 pseudo-labeled speech-motion training samples (1,402 hours) from a reusable motion teacher and a dual-metric quality curriculum; and (iii) a reproducible evaluation setup for this task class, comprising an external conversational prompt set (SwDA-500), matched-audio cascade baselines, and a shared rendering and lip-sync pipeline. Instantiated as <strong>Motion-Omni-Q7</strong> with a Qwen2.5-7B-Instruct backbone, the model reaches 2.62% word error rate, the lowest among the omni-modal systems in our speech comparison, and obtains the best beat correlation and diversity among systems that do not run the motion teacher at inference time. It completes speech-and-motion responses 5.4&times; faster than the matched non-streaming cascade built from the same speech and motion components.",
+    "highlights": [
+      {
+        "v": "2.62%",
+        "k": "WER on Seed-TTS-Eval",
+        "n": "lowest among omni-modal LLMs"
+      },
+      {
+        "v": "4.32 s",
+        "k": "Response latency",
+        "n": "RTF 0.78, faster than real time"
+      },
+      {
+        "v": "5.4&times;",
+        "k": "Speed-up",
+        "n": "vs. matched MO-audio + LOM cascade"
+      },
+      {
+        "v": "47.63",
+        "k": "VoiceBench Overall",
+        "n": "dialogue ability retained"
+      }
+    ],
+    "speech": {
+      "caption": "Speech intelligibility: WER (%) on Seed-TTS-Eval (English split, 1,088 samples); lower is better. Dedicated TTS systems synthesise a supplied sentence, whereas omni-modal LLMs also plan the response.",
+      "cols": [
+        "Model",
+        "test-en WER (%)"
+      ],
+      "groups": [
+        [
+          "Reference",
+          [
+            [
+              "Human",
+              "2.14",
+              0
+            ]
+          ]
+        ],
+        [
+          "Dedicated TTS",
+          [
+            [
+              "CosyVoice",
+              "4.29",
+              0
+            ],
+            [
+              "CosyVoice 2",
+              "2.57",
+              0
+            ],
+            [
+              "FireRedTTS",
+              "3.82",
+              0
+            ],
+            [
+              "Qwen3-TTS-12Hz-1.7B",
+              "1.24",
+              1
+            ],
+            [
+              "Qwen3-TTS-12Hz-0.6B",
+              "1.32",
+              2
+            ],
+            [
+              "CosyVoice 3-1.5B RL",
+              "1.45",
+              0
+            ],
+            [
+              "F5-TTS",
+              "2.04",
+              0
+            ],
+            [
+              "IndexTTS2",
+              "2.18",
+              0
+            ]
+          ]
+        ],
+        [
+          "Omni-modal LLMs",
+          [
+            [
+              "Qwen2.5-Omni",
+              "2.72",
+              0
+            ],
+            [
+              "Ex-Omni",
+              "2.67",
+              2
+            ],
+            [
+              "Motion-Omni-Q7 (ours)",
+              "2.62",
+              1
+            ]
+          ]
+        ]
+      ]
+    },
+    "motion": {
+      "caption": "Motion, facial geometry and lip-sync metrics on SwDA-500. Teacher-referenced metrics compare against LOM-generated motion and therefore favour systems that run LOM at inference time. FGD, BC and BC-bi are in x10<sup>-1</sup> units; Diversity is unscaled.",
+      "cols": [
+        "System",
+        "Div.",
+        "BC",
+        "BC-bi",
+        "LSE-C",
+        "LSE-D",
+        "FGD",
+        "MSE",
+        "LVD"
+      ],
+      "arrows": [
+        "",
+        "↑",
+        "↑",
+        "↑",
+        "↑",
+        "↓",
+        "↓",
+        "↓",
+        "↓"
+      ],
+      "rows": [
+        [
+          "Qwen2.5-Omni + MambaTalk",
+          [
+            "11.92",
+            0
+          ],
+          [
+            "7.17",
+            0
+          ],
+          [
+            "8.56",
+            0
+          ],
+          [
+            "6.853",
+            0
+          ],
+          [
+            "7.920",
+            0
+          ],
+          [
+            "4.08",
+            0
+          ],
+          [
+            "7.092",
+            0
+          ],
+          [
+            "6.851",
+            0
+          ]
+        ],
+        [
+          "MO-audio + MambaTalk",
+          [
+            "12.07",
+            0
+          ],
+          [
+            "7.03",
+            0
+          ],
+          [
+            "8.60",
+            0
+          ],
+          [
+            "6.797",
+            0
+          ],
+          [
+            "7.955",
+            0
+          ],
+          [
+            "4.15",
+            0
+          ],
+          [
+            "7.128",
+            0
+          ],
+          [
+            "7.019",
+            0
+          ]
+        ],
+        [
+          "Qwen2.5-Omni + GestureLSM",
+          [
+            "13.61",
+            0
+          ],
+          [
+            "7.44",
+            0
+          ],
+          [
+            "9.04",
+            0
+          ],
+          [
+            "—",
+            0
+          ],
+          [
+            "—",
+            0
+          ],
+          [
+            "3.29",
+            0
+          ],
+          [
+            "—",
+            0
+          ],
+          [
+            "—",
+            0
+          ]
+        ],
+        [
+          "MO-audio + GestureLSM",
+          [
+            "13.55",
+            0
+          ],
+          [
+            "7.49",
+            0
+          ],
+          [
+            "9.11",
+            2
+          ],
+          [
+            "—",
+            0
+          ],
+          [
+            "—",
+            0
+          ],
+          [
+            "3.17",
+            2
+          ],
+          [
+            "—",
+            0
+          ],
+          [
+            "—",
+            0
+          ]
+        ],
+        [
+          "Qwen2.5-Omni + EMAGE",
+          [
+            "11.67",
+            0
+          ],
+          [
+            "7.31",
+            0
+          ],
+          [
+            "8.66",
+            0
+          ],
+          [
+            "6.578",
+            0
+          ],
+          [
+            "8.151",
+            0
+          ],
+          [
+            "3.75",
+            0
+          ],
+          [
+            "7.553",
+            0
+          ],
+          [
+            "7.205",
+            0
+          ]
+        ],
+        [
+          "MO-audio + EMAGE",
+          [
+            "10.95",
+            0
+          ],
+          [
+            "7.32",
+            0
+          ],
+          [
+            "8.73",
+            0
+          ],
+          [
+            "6.643",
+            0
+          ],
+          [
+            "8.094",
+            0
+          ],
+          [
+            "3.29",
+            0
+          ],
+          [
+            "7.627",
+            0
+          ],
+          [
+            "7.291",
+            0
+          ]
+        ],
+        [
+          "Qwen2.5-Omni + LOM",
+          [
+            "13.82",
+            1
+          ],
+          [
+            "7.56",
+            0
+          ],
+          [
+            "9.13",
+            1
+          ],
+          [
+            "7.136",
+            1
+          ],
+          [
+            "7.128",
+            0
+          ],
+          [
+            "—",
+            0
+          ],
+          [
+            "6.581",
+            1
+          ],
+          [
+            "6.243",
+            1
+          ]
+        ],
+        [
+          "MO-audio + LOM",
+          [
+            "13.07",
+            0
+          ],
+          [
+            "7.67",
+            1
+          ],
+          [
+            "9.05",
+            0
+          ],
+          [
+            "6.985",
+            0
+          ],
+          [
+            "7.011",
+            1
+          ],
+          [
+            "—",
+            0
+          ],
+          [
+            "—",
+            0
+          ],
+          [
+            "—",
+            0
+          ]
+        ],
+        [
+          "Motion-Omni-Q7 (ours)",
+          [
+            "13.67",
+            2
+          ],
+          [
+            "7.59",
+            2
+          ],
+          [
+            "9.07",
+            0
+          ],
+          [
+            "7.011",
+            2
+          ],
+          [
+            "7.023",
+            2
+          ],
+          [
+            "3.03",
+            1
+          ],
+          [
+            "6.723",
+            2
+          ],
+          [
+            "6.427",
+            2
+          ]
+        ]
+      ],
+      "teacher_rows": [
+        6,
+        7
+      ],
+      "ours_row": 8
+    },
+    "latency": {
+      "caption": "Response latency on SwDA-500 (non-streaming, full-utterance generation). Slowdown is relative to our model.",
+      "cols": [
+        "Model",
+        "T_resp (s)",
+        "RTF",
+        "Slowdown"
+      ],
+      "rows": [
+        [
+          "Qwen2.5-Omni + LOM",
+          [
+            "99.08",
+            0
+          ],
+          [
+            "18.34",
+            0
+          ],
+          [
+            "22.9×",
+            0
+          ]
+        ],
+        [
+          "Qwen2.5-Omni + EMAGE",
+          [
+            "48.65",
+            0
+          ],
+          [
+            "8.79",
+            0
+          ],
+          [
+            "11.3×",
+            0
+          ]
+        ],
+        [
+          "MO-audio + LOM",
+          [
+            "23.35",
+            0
+          ],
+          [
+            "4.39",
+            0
+          ],
+          [
+            "5.4×",
+            0
+          ]
+        ],
+        [
+          "MO-audio + EMAGE",
+          [
+            "4.63",
+            2
+          ],
+          [
+            "0.84",
+            2
+          ],
+          [
+            "1.1×",
+            0
+          ]
+        ],
+        [
+          "Motion-Omni-Q7 (ours)",
+          [
+            "4.32",
+            1
+          ],
+          [
+            "0.78",
+            1
+          ],
+          [
+            "1.0×",
+            0
+          ]
+        ]
+      ],
+      "ours_row": 4
+    },
+    "data": {
+      "caption": "Per-stage training data of Motion-Omni-Q7.",
+      "cols": [
+        "Stage",
+        "Samples",
+        "Hours",
+        "Days"
+      ],
+      "rows": [
+        [
+          "Stage 1 — ASR",
+          "1,572,119",
+          "4,295.8",
+          "179.0"
+        ],
+        [
+          "Stage 2 — TTS",
+          "1,642,715",
+          "4,517.0",
+          "188.2"
+        ],
+        [
+          "Stage 3 — TTSM",
+          "422,856",
+          "1,402.3",
+          "58.4"
+        ],
+        [
+          "Stage 4 — Mixture",
+          "724,508",
+          "1,929.4",
+          "80.4"
+        ],
+        [
+          "Total",
+          "4,362,198",
+          "12,144.6",
+          "506.0"
+        ]
+      ]
+    },
+    "arch_caption": "Motion-Omni framework with four components and their conditioning topology.",
+    "ql_caption": "Motion quality against response latency on SwDA-500. Circles are two-stage cascades; the star is our end-to-end model. Points closer to the top-left are better. The dashed line marks RTF = 1, below which a system responds faster than real time.",
+    "authors": [
+      {
+        "name": "Chengqian Ma",
+        "aff": "Peking University"
+      },
+      {
+        "name": "Wei Tao",
+        "aff": "LIGHTSPEED"
+      },
+      {
+        "name": "Haoyu Zhang",
+        "aff": "The Chinese University of Hong Kong, Shenzhen"
+      },
+      {
+        "name": "Yiwei Guo",
+        "aff": "Independent Researcher"
+      }
+    ]
+  }
+}
