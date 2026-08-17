@@ -42,15 +42,13 @@ Everything below lives under the `"paper"` key unless stated otherwise.
 ### Links (arXiv / paper / code)
 
 ```json
-"arxiv":    "https://arxiv.org/abs/2608.01234",
-"pdf":      "https://arxiv.org/pdf/2608.01234",
-"code":     "https://github.com/...",
-"arxiv_id": "2608.01234"
+"arxiv": "https://arxiv.org/abs/2608.01234",
+"pdf":   "https://arxiv.org/pdf/2608.01234",
+"code":  "https://github.com/..."
 ```
 
 An empty string renders as a greyed-out, non-clickable button, so the page stays
-presentable before a link exists. `arxiv_id` only feeds the `eprint` field of the
-BibTeX entry.
+presentable before a link exists.
 
 ### Venue
 
@@ -65,14 +63,16 @@ the title.
 
 ```json
 "authors": [
-  { "name": "Chengqian Ma", "aff": "Peking University" },
+  { "name": "Chengqian Ma", "aff": "Peking University", "equal": true },
   { "name": "Yiwen Guo", "aff": "Independent Researcher", "corresponding": true }
 ]
 ```
 
-Order in the list is the order shown. `"corresponding": true` adds the asterisk
-and the "Corresponding author" note; drop the key to remove it. The BibTeX entry
-is generated from this same list, so the two can never disagree.
+Order in the list is the order shown. Two optional flags add role markers,
+matching the paper: `"equal": true` marks equal contribution (`*`) and
+`"corresponding": true` marks the corresponding author (`†`). Each note line
+appears only when at least one author carries that flag. The BibTeX entry is
+generated from this same list, so the two can never disagree.
 
 Names appear on one line and affiliations on the next, linked by superscript
 numbers that are assigned automatically. Authors sharing an affiliation share a

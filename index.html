@@ -193,15 +193,20 @@ fetch('manifest.json').then(r => r.json()).then(d => {
   // Names on one line, affiliations on the next, linked by superscript numbers.
   // Identical affiliations collapse onto one number, so adding a co-author from
   // an existing institution does not duplicate it in the second line.
+  // Role markers match the paper: * equal contribution, † corresponding.
   const affs = [];
   (p.authors || []).forEach(a => { if (!affs.includes(a.aff)) affs.push(a.aff); });
-  const nameLine = (p.authors || []).map(a =>
-    `<span class="au">${esc(a.name)}<sup>${affs.indexOf(a.aff) + 1}` +
-    `${a.corresponding ? ',*' : ''}</sup></span>`).join('');
+  const nameLine = (p.authors || []).map(a => {
+    const roles = (a.equal ? '*' : '') + (a.corresponding ? '\u2020' : '');
+    return `<span class="au">${esc(a.name)}<sup>${affs.indexOf(a.aff) + 1}` +
+           `${roles ? ',' + roles : ''}</sup></span>`;
+  }).join('');
   const affLine = affs.map((aff, i) =>
     `<span class="af"><sup>${i + 1}</sup>${esc(aff)}</span>`).join('');
-  const note = (p.authors || []).some(a => a.corresponding)
-    ? `<div class="cor"><sup>*</sup>Corresponding author</div>` : '';
+  const notes = [];
+  if ((p.authors || []).some(a => a.equal)) notes.push('<sup>*</sup>Equal contribution');
+  if ((p.authors || []).some(a => a.corresponding)) notes.push('<sup>\u2020</sup>Corresponding author');
+  const note = notes.length ? `<div class="cor">${notes.join(' &nbsp; ')}</div>` : '';
   document.getElementById('authors').innerHTML =
     `<div class="names">${nameLine}</div><div class="affs">${affLine}</div>${note}`;
 
@@ -306,16 +311,13 @@ fetch('manifest.json').then(r => r.json()).then(d => {
 
   /* ---- bibtex ---- */
   // Built from p.authors so the entry can never drift from the header.
-  // BibTeX joins authors with " and ". This is the canonical arXiv form;
-  // fill in eprint once the identifier is assigned.
+  // BibTeX joins authors with " and ". Once an arXiv identifier exists, add
+  // eprint / archivePrefix / primaryClass fields here.
   const bibAuthors = (p.authors || []).map(a => a.name).join(' and ');
   document.getElementById('bib').textContent = p.bibtex || `@article{ma2026motionomni,
-  title         = {${p.title}},
-  author        = {${bibAuthors}},
-  year          = {2026},
-  eprint        = {${p.arxiv_id || 'XXXX.XXXXX'}},
-  archivePrefix = {arXiv},
-  primaryClass  = {cs.CV}
+  title   = {${p.title}},
+  author  = {${bibAuthors}},
+  year    = {2026}
 }`;
 
   document.getElementById('foot').innerHTML =
