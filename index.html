@@ -176,7 +176,11 @@ fetch('manifest.json').then(r => r.json()).then(d => {
   /* ---- header ---- */
   document.getElementById('ttl').innerHTML =
     esc(p.title).replace('Motion-Omni', '<span class="brand">Motion-Omni</span>');
-  document.getElementById('venue').textContent = p.venue;
+  // Empty venue renders nothing at all, so the line stays out of the way until
+  // there is a real venue to announce.
+  const venueEl = document.getElementById('venue');
+  if (p.venue) venueEl.textContent = p.venue;
+  else venueEl.style.display = 'none';
   document.getElementById('authors').innerHTML = (p.authors || [])
     .map(a => `${esc(a.name)}${a.corresponding ? '<sup>*</sup>' : ''}` +
               `<span style="color:#a4aebc"> (${esc(a.aff)})</span>`)
@@ -285,11 +289,17 @@ fetch('manifest.json').then(r => r.json()).then(d => {
     </div>`).join('');
 
   /* ---- bibtex ---- */
-  document.getElementById('bib').textContent = p.bibtex || `@inproceedings{motionomni,
-  title     = {${p.title}},
-  author    = {Anonymous},
-  booktitle = {Under review},
-  year      = {2026}
+  // Built from p.authors so the entry can never drift from the header.
+  // BibTeX joins authors with " and ". This is the canonical arXiv form;
+  // fill in eprint once the identifier is assigned.
+  const bibAuthors = (p.authors || []).map(a => a.name).join(' and ');
+  document.getElementById('bib').textContent = p.bibtex || `@article{ma2026motionomni,
+  title         = {${p.title}},
+  author        = {${bibAuthors}},
+  year          = {2026},
+  eprint        = {${p.arxiv_id || 'XXXX.XXXXX'}},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV}
 }`;
 
   document.getElementById('foot').innerHTML =

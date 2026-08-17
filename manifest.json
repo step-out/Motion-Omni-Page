@@ -120,7 +120,7 @@
   ],
   "paper": {
     "title": "Motion-Omni: End-to-End Joint Speech and Full-Body Motion for Spoken Dialogue",
-    "venue": "Preprint",
+    "venue": "",
     "arxiv": "",
     "code": "",
     "pdf": "",
@@ -727,6 +727,7 @@
         "aff": "Independent Researcher",
         "corresponding": true
       }
-    ]
+    ],
+    "arxiv_id": ""
   }
 }
