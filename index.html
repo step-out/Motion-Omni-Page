@@ -22,7 +22,16 @@ header{background:var(--panel);border-bottom:1px solid var(--line);padding:56px 
 h1{font-size:33px;line-height:1.28;font-weight:680;letter-spacing:-.4px;max-width:830px;margin:0 auto}
 h1 .brand{color:var(--accent)}
 .venue{margin-top:16px;color:var(--ink2);font-size:15px}
-.authors{margin-top:11px;color:var(--ink2);font-size:14.5px;line-height:1.75}
+.authors{margin-top:20px}
+/* Names and affiliations sit on separate lines; wide inline gaps let a long
+   author list wrap sensibly on narrow screens instead of overflowing. */
+.names{font-size:16.5px;color:var(--ink)}
+.names .au{display:inline-block;margin:0 13px 3px}
+.names sup{font-size:.66em;color:var(--accent);font-weight:600}
+.affs{margin-top:7px;font-size:13.5px;color:var(--ink2)}
+.affs .af{display:inline-block;margin:0 10px 2px}
+.affs sup{font-size:.72em;color:var(--accent);font-weight:600;margin-right:1px}
+.cor{margin-top:9px;font-size:12.5px;color:var(--ink3)}
 .links{display:flex;gap:11px;justify-content:center;flex-wrap:wrap;margin-top:26px}
 .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 19px;border-radius:8px;
   background:var(--ink);color:#fff;text-decoration:none;font-size:14.5px;font-weight:550;
@@ -181,13 +190,20 @@ fetch('manifest.json').then(r => r.json()).then(d => {
   const venueEl = document.getElementById('venue');
   if (p.venue) venueEl.textContent = p.venue;
   else venueEl.style.display = 'none';
-  document.getElementById('authors').innerHTML = (p.authors || [])
-    .map(a => `${esc(a.name)}${a.corresponding ? '<sup>*</sup>' : ''}` +
-              `<span style="color:#a4aebc"> (${esc(a.aff)})</span>`)
-    .join(' &nbsp;&middot;&nbsp; ') +
-    ((p.authors || []).some(a => a.corresponding)
-      ? `<div style="margin-top:7px;font-size:12.5px;color:#8a95a3"><sup>*</sup> Corresponding author</div>`
-      : '');
+  // Names on one line, affiliations on the next, linked by superscript numbers.
+  // Identical affiliations collapse onto one number, so adding a co-author from
+  // an existing institution does not duplicate it in the second line.
+  const affs = [];
+  (p.authors || []).forEach(a => { if (!affs.includes(a.aff)) affs.push(a.aff); });
+  const nameLine = (p.authors || []).map(a =>
+    `<span class="au">${esc(a.name)}<sup>${affs.indexOf(a.aff) + 1}` +
+    `${a.corresponding ? ',*' : ''}</sup></span>`).join('');
+  const affLine = affs.map((aff, i) =>
+    `<span class="af"><sup>${i + 1}</sup>${esc(aff)}</span>`).join('');
+  const note = (p.authors || []).some(a => a.corresponding)
+    ? `<div class="cor"><sup>*</sup>Corresponding author</div>` : '';
+  document.getElementById('authors').innerHTML =
+    `<div class="names">${nameLine}</div><div class="affs">${affLine}</div>${note}`;
 
   const L = [
     ['arxiv', 'arXiv', '📄'], ['pdf', 'Paper', '📕'],

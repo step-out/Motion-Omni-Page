@@ -74,6 +74,10 @@ Order in the list is the order shown. `"corresponding": true` adds the asterisk
 and the "Corresponding author" note; drop the key to remove it. The BibTeX entry
 is generated from this same list, so the two can never disagree.
 
+Names appear on one line and affiliations on the next, linked by superscript
+numbers that are assigned automatically. Authors sharing an affiliation share a
+number — write the affiliation string identically for that to happen.
+
 ### Title, abstract, figure captions
 
 ```json
