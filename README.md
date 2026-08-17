@@ -16,6 +16,11 @@ Settings → Pages → Source: *Deploy from a branch* → Branch: `main`, folder
 
 ## Layout
 
+Sections run in this order: abstract, framework figure, video samples, result
+tables, BibTeX. The videos sit above the tables so a reader meets them without
+scrolling to the end. To reorder, move the `<section>` blocks in `index.html` —
+the rendering code addresses elements by id, so it does not depend on their order.
+
 ```
 index.html                 markup + rendering logic
 manifest.json              ALL page content — edit this, not index.html
@@ -73,6 +78,10 @@ matching the paper: `"equal": true` marks equal contribution (`*`) and
 `"corresponding": true` marks the corresponding author (`†`). Each note line
 appears only when at least one author carries that flag. The BibTeX entry is
 generated from this same list, so the two can never disagree.
+
+When the authors flagged `"equal"` are the leading run of the list, the note
+names them — "The first three authors contributed equally". Flag a
+non-contiguous set instead and it lists them by name.
 
 Names appear on one line and affiliations on the next, linked by superscript
 numbers that are assigned automatically. Authors sharing an affiliation share a
