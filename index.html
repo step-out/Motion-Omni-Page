@@ -98,7 +98,7 @@ tr.total td{font-weight:640;border-top:1.5px solid #d7dde5}
 .cmprow{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px 20px}
 .cmpq{font-size:14.5px;font-weight:600;line-height:1.5}
 .cmpa{font-size:13px;color:var(--ink2);margin-top:7px;line-height:1.62}
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:15px}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:15px}
 .pane{min-width:0}
 .pane video{width:100%;display:block;background:#101418;aspect-ratio:9/16;object-fit:cover;
   border-radius:9px;border:1px solid var(--line)}
@@ -320,24 +320,26 @@ fetch('manifest.json').then(r => r.json()).then(d => {
     ? esc(cmp.note)
     : `${d.count} responses generated end-to-end from spoken input.`;
 
-  /* Corpus-level numbers come from Table 3 / Table 5 (500 clips). Per-clip
-     figures are deliberately not shown: six clips are too few to reproduce a
-     corpus statistic, and quoting a subset value that disagrees with the paper
-     would undercut the very comparison this section is making. */
+  /* Corpus-level numbers come from Tables 3-5 (500 clips). Per-clip figures are
+     deliberately not shown: six clips are too few to reproduce a corpus
+     statistic, and quoting a subset value that disagrees with the paper would
+     undercut the very comparison this section is making. */
   if (cmp) {
-    const rows = [['', 'BC<sub>bi</sub> ↑', 'Diversity ↑', 'RTF ↓', 'Response time']]
-      .concat([[cmp.ours.label, cmp.ours.paper_bc, cmp.ours.paper_div,
-                cmp.ours.paper_rtf, cmp.ours.paper_slowdown]])
+    const head = ['', 'BC<sub>bi</sub> ↑', 'Diversity ↑', 'RTF ↓', 'Slowdown',
+                  'Human pref. W/T/L'];
+    const body = [[cmp.ours.label, cmp.ours.paper_bc, cmp.ours.paper_div,
+                   cmp.ours.paper_rtf, cmp.ours.paper_slowdown, cmp.ours.paper_pref || '—']]
       .concat(cmp.baselines.map(b =>
-        [b.label, b.paper_bc, b.paper_div, b.paper_rtf, b.paper_slowdown]));
+        [b.label, b.paper_bc, b.paper_div, b.paper_rtf, b.paper_slowdown,
+         b.paper_pref || '—']));
     document.getElementById('cmpkey').innerHTML =
       `<div class="tbl" style="margin-top:22px">
         <div class="tcap"><b>Reference numbers</b> — measured over all 500 SwDA-500 clips
-         (Table 3 and Table 5), not over these six. Motion quality is on par with the
-         teacher while responding ${esc(cmp.baselines[0].paper_slowdown)} faster.</div>
-        <table><thead><tr>${rows[0].map((c, i) =>
+         (Tables 3–5), not over these six. Human preference is ours versus that baseline,
+         wins/ties/losses pooled over rhythm, semantics and naturalness.</div>
+        <table><thead><tr>${head.map((c, i) =>
           `<th${i ? '' : ' style="text-align:left"'}>${c}</th>`).join('')}</tr></thead>
-        <tbody>${rows.slice(1).map((r, ri) =>
+        <tbody>${body.map((r, ri) =>
           `<tr class="${ri === 0 ? 'ours' : ''}">` +
           r.map((c, i) => `<td${i ? '' : ' style="text-align:left"'}>${esc(c)}</td>`).join('') +
           `</tr>`).join('')}</tbody></table>

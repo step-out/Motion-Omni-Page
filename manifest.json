@@ -745,18 +745,31 @@
     ]
   },
   "comparison": {
-    "note": "Same audio, different motion generator. Ours produces speech and motion in one autoregressive pass; the baseline row is our own speech audio fed to LOM, the motion teacher, as a separate audio-to-motion stage -- the MO-audio + LOM row of Table 3.",
+    "note": "Same audio, three motion generators. Ours emits speech and motion in one autoregressive pass; each baseline takes our speech audio and runs a separate audio-to-motion stage -- the MO-audio + LOM and MO-audio + EMAGE rows of the paper.",
     "baselines": [
       {
         "key": "lom",
         "label": "MO-audio + LOM",
-        "detail": "Our speech audio, motion from LOM (teacher model, separate stage)",
+        "detail": "Our audio, motion from LOM (the teacher this model distils from)",
         "video_dir": "videos_lom",
         "thumb_dir": "thumbs_lom",
         "paper_bc": "9.05",
         "paper_div": "13.07",
         "paper_rtf": "4.39",
-        "paper_slowdown": "5.4x"
+        "paper_slowdown": "5.4x",
+        "paper_pref": "25/27/23 (+2)"
+      },
+      {
+        "key": "emage",
+        "label": "MO-audio + EMAGE",
+        "detail": "Our audio, motion from EMAGE",
+        "video_dir": "videos_emage",
+        "thumb_dir": "thumbs_emage",
+        "paper_bc": "8.73",
+        "paper_div": "10.95",
+        "paper_rtf": "0.84",
+        "paper_slowdown": "1.1x",
+        "paper_pref": "45/10/20 (+25)"
       }
     ],
     "ours": {
@@ -764,7 +777,8 @@
       "paper_bc": "9.07",
       "paper_div": "13.67",
       "paper_rtf": "0.78",
-      "paper_slowdown": "1.0x"
+      "paper_slowdown": "1.0x",
+      "paper_pref": "—"
     }
   }
 }
