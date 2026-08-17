@@ -20,7 +20,9 @@
         "response.wav",
         "motion.npz",
         "motion_codes.npz"
-      ]
+      ],
+      "bc_ours": 0.775,
+      "bc_lom": 0.8552
     },
     {
       "name": "demo2_extracurricular_activities",
@@ -39,7 +41,9 @@
         "response.wav",
         "motion.npz",
         "motion_codes.npz"
-      ]
+      ],
+      "bc_ours": 0.8836,
+      "bc_lom": 0.9375
     },
     {
       "name": "demo3_positive_character_traits",
@@ -58,7 +62,9 @@
         "response.wav",
         "motion.npz",
         "motion_codes.npz"
-      ]
+      ],
+      "bc_ours": 0.8165,
+      "bc_lom": 0.9032
     },
     {
       "name": "demo4_social_media_frequency",
@@ -77,7 +83,9 @@
         "response.wav",
         "motion.npz",
         "motion_codes.npz"
-      ]
+      ],
+      "bc_ours": 0.743,
+      "bc_lom": 0.9474
     },
     {
       "name": "demo5_social_relationships",
@@ -96,7 +104,9 @@
         "response.wav",
         "motion.npz",
         "motion_codes.npz"
-      ]
+      ],
+      "bc_ours": 0.9342,
+      "bc_lom": 0.9809
     },
     {
       "name": "demo6_bruce_wayne",
@@ -115,7 +125,9 @@
         "response.wav",
         "motion.npz",
         "motion_codes.npz"
-      ]
+      ],
+      "bc_ours": 0.8722,
+      "bc_lom": 0.9595
     }
   ],
   "paper": {
@@ -731,5 +743,28 @@
         "corresponding": true
       }
     ]
+  },
+  "comparison": {
+    "note": "Same audio, different motion generator. Ours produces speech and motion in one autoregressive pass; the baseline row is our own speech audio fed to LOM, the motion teacher, as a separate audio-to-motion stage -- the MO-audio + LOM row of Table 3.",
+    "baselines": [
+      {
+        "key": "lom",
+        "label": "MO-audio + LOM",
+        "detail": "Our speech audio, motion from LOM (teacher model, separate stage)",
+        "video_dir": "videos_lom",
+        "thumb_dir": "thumbs_lom",
+        "paper_bc": "9.05",
+        "paper_div": "13.07",
+        "paper_rtf": "4.39",
+        "paper_slowdown": "5.4x"
+      }
+    ],
+    "ours": {
+      "label": "Motion-Omni-Q7 (ours)",
+      "paper_bc": "9.07",
+      "paper_div": "13.67",
+      "paper_rtf": "0.78",
+      "paper_slowdown": "1.0x"
+    }
   }
 }
