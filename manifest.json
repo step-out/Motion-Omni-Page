@@ -745,7 +745,7 @@
     ]
   },
   "comparison": {
-    "note": "Same audio, three motion generators. Ours emits speech and motion in one autoregressive pass; each baseline takes our speech audio and runs a separate audio-to-motion stage -- the MO-audio + LOM and MO-audio + EMAGE rows of the paper.",
+    "note": "Same audio, four motion generators. Ours emits speech and motion in one autoregressive pass; each baseline takes our speech audio and runs a separate audio-to-motion stage -- the MO-audio + LOM, MO-audio + GestureLSM and MO-audio + EMAGE rows of the paper. Dashes mark settings the paper does not measure (GestureLSM is not part of the latency or human-preference study).",
     "baselines": [
       {
         "key": "lom",
@@ -758,6 +758,18 @@
         "paper_rtf": "4.39",
         "paper_slowdown": "5.4x",
         "paper_pref": "25/27/23 (+2)"
+      },
+      {
+        "key": "glsm",
+        "label": "MO-audio + GestureLSM",
+        "detail": "Our audio, motion from GestureLSM (flow-matching latent model)",
+        "video_dir": "videos_glsm",
+        "thumb_dir": "thumbs_glsm",
+        "paper_bc": "9.11",
+        "paper_div": "13.55",
+        "paper_rtf": "—",
+        "paper_slowdown": "—",
+        "paper_pref": "—"
       },
       {
         "key": "emage",
