@@ -782,6 +782,18 @@
         "paper_rtf": "0.84",
         "paper_slowdown": "1.1x",
         "paper_pref": "45/10/20 (+25)"
+      },
+      {
+        "key": "mamba",
+        "label": "MO-audio + MambaTalk",
+        "detail": "Our audio, motion from MambaTalk",
+        "video_dir": "videos_mamba",
+        "thumb_dir": "thumbs_mamba",
+        "paper_bc": "8.60",
+        "paper_div": "12.07",
+        "paper_rtf": "—",
+        "paper_slowdown": "—",
+        "paper_pref": "—"
       }
     ],
     "ours": {

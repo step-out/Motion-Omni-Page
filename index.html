@@ -363,7 +363,9 @@ fetch('manifest.json').then(r => r.json()).then(d => {
         <video src="${esc(b.video_dir)}/${encodeURIComponent(v.name)}.mp4"
                poster="${esc(b.thumb_dir)}/${encodeURIComponent(v.name)}.jpg"
                controls preload="metadata" playsinline></video>
-        <div class="psub">RTF ${esc(b.paper_rtf)} &middot; ${esc(b.paper_slowdown)} slower to respond</div>
+        <div class="psub">${b.paper_rtf === '—'
+          ? 'latency not measured in the paper'
+          : `RTF ${esc(b.paper_rtf)} &middot; ${esc(b.paper_slowdown)} slower to respond`}</div>
       </div>`);
     });
     return `<div class="cmprow">
