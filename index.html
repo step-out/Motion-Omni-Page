@@ -230,29 +230,19 @@ fetch('manifest.json').then(r => r.json()).then(d => {
   // Names on one line, affiliations on the next, linked by superscript numbers.
   // Identical affiliations collapse onto one number, so adding a co-author from
   // an existing institution does not duplicate it in the second line.
-  // Role markers match the paper: * equal contribution, † corresponding.
+  // Role marker matches the paper: * corresponding author. (The ICLR style sets
+  // \thefootnote to \fnsymbol, so the paper's single \thanks renders as *, not †.)
   const affs = [];
   (p.authors || []).forEach(a => { if (!affs.includes(a.aff)) affs.push(a.aff); });
   const nameLine = (p.authors || []).map(a => {
-    const roles = (a.equal ? '*' : '') + (a.corresponding ? '\u2020' : '');
+    const roles = a.corresponding ? '*' : '';
     return `<span class="au">${esc(a.name)}<sup>${affs.indexOf(a.aff) + 1}` +
            `${roles ? ',' + roles : ''}</sup></span>`;
   }).join('');
   const affLine = affs.map((aff, i) =>
     `<span class="af"><sup>${i + 1}</sup>${esc(aff)}</span>`).join('');
   const notes = [];
-  const eq = (p.authors || []).filter(a => a.equal);
-  if (eq.length) {
-    // Say which authors, not just "equal contribution": when the flagged authors
-    // are the leading run of the list, name them as "the first N".
-    const leading = eq.length > 1 &&
-      eq.every((a, i) => (p.authors || [])[i] === a);
-    const word = { 2: 'two', 3: 'three', 4: 'four', 5: 'five' }[eq.length];
-    notes.push('<sup>*</sup>' + (leading && word
-      ? `The first ${word} authors contributed equally`
-      : `Equal contribution: ${eq.map(a => esc(a.name)).join(', ')}`));
-  }
-  if ((p.authors || []).some(a => a.corresponding)) notes.push('<sup>\u2020</sup>Corresponding author');
+  if ((p.authors || []).some(a => a.corresponding)) notes.push('<sup>*</sup>Corresponding author');
   const note = notes.length ? `<div class="cor">${notes.join(' &nbsp;&middot;&nbsp; ')}</div>` : '';
   document.getElementById('authors').innerHTML =
     `<div class="names">${nameLine}</div><div class="affs">${affLine}</div>${note}`;

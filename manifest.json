@@ -724,18 +724,15 @@
     "authors": [
       {
         "name": "Chengqian Ma",
-        "aff": "Peking University",
-        "equal": true
+        "aff": "Peking University"
       },
       {
         "name": "Wei Tao",
-        "aff": "LIGHTSPEED",
-        "equal": true
+        "aff": "LIGHTSPEED"
       },
       {
         "name": "Haoyu Zhang",
-        "aff": "The Chinese University of Hong Kong, Shenzhen",
-        "equal": true
+        "aff": "The Chinese University of Hong Kong, Shenzhen"
       },
       {
         "name": "Yiwen Guo",
