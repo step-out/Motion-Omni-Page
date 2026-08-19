@@ -745,7 +745,6 @@
     ]
   },
   "comparison": {
-    "note": "Same audio, five motion sources stacked as a deck -- click a card, a tab or an arrow to bring another system to the front. Ours emits speech and motion in one autoregressive pass; each baseline takes our speech audio and runs a separate audio-to-motion stage -- the MO-audio + LOM, MO-audio + GestureLSM, MO-audio + EMAGE and MO-audio + MambaTalk rows of the paper. Dashes mark settings the paper does not measure (GestureLSM and MambaTalk are in neither the latency nor the human-preference study).",
     "baselines": [
       {
         "key": "lom",

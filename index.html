@@ -173,7 +173,6 @@ footer{padding:38px 0 52px;text-align:center;color:var(--ink3);font-size:13px;
 <section>
   <div class="wrap">
     <h2>Video Samples</h2>
-    <p class="lead" style="text-align:center;font-size:15px" id="demolead"></p>
     <div id="cmpkey"></div>
     <div class="cmp" id="grid"></div>
   </div>
@@ -336,9 +335,6 @@ fetch('manifest.json').then(r => r.json()).then(d => {
 
   /* ---- demos: a deck of systems per case, all driven by the same audio ---- */
   const cmp = d.comparison;
-  document.getElementById('demolead').innerHTML = cmp
-    ? esc(cmp.note)
-    : `${d.count} responses generated end-to-end from spoken input.`;
 
   /* Corpus-level numbers come from Tables 3-5 (500 clips). Per-clip figures are
      deliberately not shown: six clips are too few to reproduce a corpus
