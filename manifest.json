@@ -43,7 +43,13 @@
         "motion_codes.npz"
       ],
       "bc_ours": 0.8836,
-      "bc_lom": 0.9375
+      "bc_lom": 0.9375,
+      "obs": {
+        "lom": "A stray leg movement in the last two seconds, unrelated to what is being said.",
+        "glsm": "Lip shapes track the spoken audio only loosely.",
+        "emage": "Body motion is over-scaled — bouncing and waving rather than talking.",
+        "mamba": "Many small aimless movements, and the head keeps swinging side to side."
+      }
     },
     {
       "name": "demo3_positive_character_traits",
@@ -64,7 +70,12 @@
         "motion_codes.npz"
       ],
       "bc_ours": 0.8165,
-      "bc_lom": 0.9032
+      "bc_lom": 0.9032,
+      "obs": {
+        "lom": "Walks around the space — closer to presenting on stage than talking to someone.",
+        "emage": "An extra raised-hand gesture right at the start, before the reply begins.",
+        "mamba": "Many small aimless movements, and the head keeps swinging side to side."
+      }
     },
     {
       "name": "demo4_social_media_frequency",

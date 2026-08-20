@@ -120,6 +120,14 @@ tr.total td{font-weight:640;border-top:1.5px solid #d7dde5}
 .pnote{font-size:11.5px;color:var(--ink3)}
 .psub,.decksub{font-size:11.5px;color:var(--ink3);margin-top:7px;line-height:1.5}
 .decksub{text-align:center;min-height:17px}
+/* Per-clip observation.  Hidden unless the manifest carries a note for this
+   case + system pair, so decks without a note keep their current height. */
+.deckobs{display:none;max-width:430px;margin:7px auto 0;padding:6px 10px;
+  font-size:11.5px;line-height:1.55;text-align:left;color:var(--ink2);
+  background:#fbfbfc;border:1px solid var(--line);border-left:2px solid #c98a2e;border-radius:3px}
+.deckobs.show{display:block}
+.deckobs b{display:block;font-weight:600;color:var(--ink3);font-size:10px;
+  letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}
 .decknav{display:flex;align-items:center;justify-content:center;gap:6px;
   flex-wrap:wrap;margin-top:13px}
 .dtab,.dnav{font:inherit;font-size:11.5px;color:var(--ink2);background:#fff;
@@ -355,6 +363,7 @@ fetch('manifest.json').then(r => r.json()).then(d => {
   /* One deck per case.  `systems` is the display order inside every deck:
      ours first, then the baselines in manifest order. */
   const systems = [{
+    key: 'ours',
     ours: true,
     label: (cmp && cmp.ours.label) || 'Ours',
     note: 'single pass',
@@ -362,6 +371,7 @@ fetch('manifest.json').then(r => r.json()).then(d => {
     sub: `RTF ${cmp ? cmp.ours.paper_rtf : '—'} \u00b7 single autoregressive pass`,
     src: v => 'videos/' + encodeURIComponent(v.video)
   }].concat((cmp ? cmp.baselines : []).map(b => ({
+    key: b.key,
     ours: false,
     label: b.label,
     note: 'separate stage',
@@ -394,6 +404,7 @@ fetch('manifest.json').then(r => r.json()).then(d => {
         <div class="deckhead"><span class="pname"></span><span class="pnote"></span></div>
         <div class="deckouter"><div class="deckstage">${cards}</div></div>
         <div class="decksub"></div>
+        <div class="deckobs"></div>
         <div class="decknav">
           <button class="dnav" data-d="-1" aria-label="previous system">&lsaquo;</button>
           ${tabs}
@@ -427,6 +438,13 @@ fetch('manifest.json').then(r => r.json()).then(d => {
     row.querySelector('.deckhead .pname').textContent = s.label;
     row.querySelector('.deckhead .pnote').textContent = s.note;
     row.querySelector('.decksub').textContent = s.sub;
+    /* Qualitative note for this one clip.  Labelled "in this clip" on purpose:
+       these are single-case observations, not the paper's measured results. */
+    const obs = (it[+row.dataset.row] || {}).obs || {};
+    const text = obs[s.key];
+    const box = row.querySelector('.deckobs');
+    box.innerHTML = text ? '<b>In this clip</b>' + esc(text) : '';
+    box.classList.toggle('show', !!text);
     row.querySelectorAll('.dtab').forEach(t =>
       t.classList.toggle('on', +t.dataset.si === active));
   }
