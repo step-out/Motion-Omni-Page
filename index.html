@@ -224,7 +224,10 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g,
 const mk = (v, m) => m === 1 ? `<span class="b1">${v}</span>`
                  : m === 2 ? `<span class="b2">${v}</span>` : v;
 
-fetch('manifest.json').then(r => r.json()).then(d => {
+// no-store: the dev server sends no Cache-Control, so a browser would otherwise
+// serve a heuristically-fresh manifest and render content the page no longer
+// matches.  The file is small, so always taking it from the network is cheap.
+fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
   const p = d.paper, it = d.items || [];
 
   /* ---- header ---- */
