@@ -388,12 +388,15 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
   // The full label still appears above the deck, so nothing is lost.
   const tabName = s => s.ours ? 'Ours' : s.label.replace(/^MO-audio \+\s*/, '');
 
-  /* Cases flagged `hide` in the manifest are skipped here but kept in the data,
-     so putting one back is a manifest edit rather than a code change.  Mapping
-     over the full list keeps `i` at the manifest position, so SAMPLE numbers
-     stay stable and `data-row` still indexes `it` for the per-clip note. */
-  document.getElementById('grid').innerHTML = it.map((v, i) => {
-    if (v.hide) return '';
+  /* Cases flagged `hide` in the manifest are dropped here but kept in the data,
+     so putting one back is a manifest edit rather than a code change.
+     `i` stays the manifest position because `data-row` indexes `it` for the
+     per-clip note; `n` is the position among visible cases, so the SAMPLE
+     labels read 01, 02, ... with no gap where a hidden case used to be. */
+  document.getElementById('grid').innerHTML = it
+    .map((v, i) => [v, i])
+    .filter(([v]) => !v.hide)
+    .map(([v, i], n) => {
     // preload="none" keeps 6 cases x 5 systems from firing 30 range requests;
     // the poster still renders, so the deck looks populated immediately.
     const cards = systems.map((s, si) => `
@@ -404,7 +407,7 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
     const tabs = systems.map((s, si) =>
       `<button class="dtab" data-si="${si}">${esc(tabName(s))}</button>`).join('');
     return `<div class="cmprow" data-row="${i}">
-      <div class="cno">SAMPLE ${String(i + 1).padStart(2, '0')}
+      <div class="cno">SAMPLE ${String(n + 1).padStart(2, '0')}
         &nbsp;·&nbsp; ASR WER ${(v.asr_wer * 100).toFixed(1)}%</div>
       <div class="cmpq">${esc(v.question)}</div>
       <div class="cmpa">${esc(v.answer)}</div>
