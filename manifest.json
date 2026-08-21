@@ -22,7 +22,8 @@
         "motion_codes.npz"
       ],
       "bc_ours": 0.775,
-      "bc_lom": 0.8552
+      "bc_lom": 0.8552,
+      "hide": true
     },
     {
       "name": "demo2_extracurricular_activities",
@@ -73,6 +74,7 @@
       "bc_lom": 0.9032,
       "obs": {
         "lom": "Walks around the space — closer to presenting on stage than talking to someone.",
+        "glsm": "Lip shapes track the spoken audio only loosely.",
         "emage": "An extra raised-hand gesture right at the start, before the reply begins.",
         "mamba": "Many small aimless movements, and the head keeps swinging side to side."
       }
@@ -96,7 +98,8 @@
         "motion_codes.npz"
       ],
       "bc_ours": 0.743,
-      "bc_lom": 0.9474
+      "bc_lom": 0.9474,
+      "hide": true
     },
     {
       "name": "demo5_social_relationships",
@@ -117,7 +120,8 @@
         "motion_codes.npz"
       ],
       "bc_ours": 0.9342,
-      "bc_lom": 0.9809
+      "bc_lom": 0.9809,
+      "hide": true
     },
     {
       "name": "demo6_bruce_wayne",
@@ -138,7 +142,8 @@
         "motion_codes.npz"
       ],
       "bc_ours": 0.8722,
-      "bc_lom": 0.9595
+      "bc_lom": 0.9595,
+      "hide": true
     }
   ],
   "paper": {

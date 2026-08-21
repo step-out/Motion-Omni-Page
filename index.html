@@ -385,7 +385,12 @@ fetch('manifest.json').then(r => r.json()).then(d => {
   // The full label still appears above the deck, so nothing is lost.
   const tabName = s => s.ours ? 'Ours' : s.label.replace(/^MO-audio \+\s*/, '');
 
+  /* Cases flagged `hide` in the manifest are skipped here but kept in the data,
+     so putting one back is a manifest edit rather than a code change.  Mapping
+     over the full list keeps `i` at the manifest position, so SAMPLE numbers
+     stay stable and `data-row` still indexes `it` for the per-clip note. */
   document.getElementById('grid').innerHTML = it.map((v, i) => {
+    if (v.hide) return '';
     // preload="none" keeps 6 cases x 5 systems from firing 30 range requests;
     // the poster still renders, so the deck looks populated immediately.
     const cards = systems.map((s, si) => `
