@@ -92,37 +92,38 @@ tr.total td{font-weight:640;border-top:1.5px solid #d7dde5}
 
 /* demos */
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(292px,1fr));gap:20px;margin-top:30px}
-/* Same-audio comparison: one row per case.  Five systems would not fit side by
-   side, so they are stacked as a deck -- the selected clip sits in front and the
-   rest peek out behind it, semi-transparent.  Click a card, a tab, or an arrow
-   to bring another system forward. */
+/* Same-audio comparison: one row per case.  Ours and one baseline sit side by
+   side and play together off the same response audio, so the motion is the only
+   thing that differs.  Tabs swap which baseline occupies the right pane. */
 .cmp{display:flex;flex-direction:column;gap:26px;margin-top:28px}
 .cmprow{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px 20px}
 .cmpq{font-size:14.5px;font-weight:600;line-height:1.5}
 .cmpa{font-size:13px;color:var(--ink2);margin-top:7px;line-height:1.62}
 .deckwrap{margin-top:16px}
-.deckhead{display:flex;align-items:baseline;justify-content:center;gap:8px;
-  flex-wrap:wrap;min-height:19px;margin-bottom:10px}
-.deckouter{display:flex;justify-content:center}
-/* the fan extends --fan to the right; the matching right margin keeps the
-   whole stack optically centred instead of the front card alone */
-.deckstage{--fan:92px;position:relative;width:min(298px,66vw);aspect-ratio:9/16;
-  margin-right:var(--fan)}
-.dcard{position:absolute;inset:0;cursor:pointer;
-  transition:transform .34s cubic-bezier(.25,.8,.3,1),opacity .34s}
-.dcard video{width:100%;height:100%;display:block;object-fit:cover;background:#101418;
-  border:1px solid var(--line);border-radius:10px;pointer-events:none}
-.dcard.active{cursor:default}
-.dcard.active video{pointer-events:auto}
-.dcard.ours.active video{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+/* Two panes side by side: ours on the left, the selected baseline on the right.
+   Both clips come from the same response audio and are the same length, so the
+   pair plays in lockstep and the only visible difference is the motion. */
+.pairouter{display:flex;justify-content:center}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;
+  width:min(620px,100%)}
+.pane{min-width:0}
+.phead{display:flex;align-items:baseline;justify-content:center;gap:7px;
+  flex-wrap:wrap;min-height:19px;margin-bottom:7px}
+.pane video{width:100%;display:block;aspect-ratio:9/16;object-fit:cover;
+  background:#101418;border:1px solid var(--line);border-radius:10px}
+.pane.ours video{border-color:var(--accent)}
+/* The baseline is muted and has no controls of its own: the audio is identical,
+   so two live tracks would only echo.  Clicking it drives the pair instead. */
+.pane.base video{cursor:pointer}
 .pname{font-size:13.5px;font-weight:650}
-.dcard.ours .pname,.deckhead.ours .pname{color:var(--accent)}
+.pane.ours .pname{color:var(--accent)}
 .pnote{font-size:11.5px;color:var(--ink3)}
-.psub,.decksub{font-size:11.5px;color:var(--ink3);margin-top:7px;line-height:1.5}
-.decksub{text-align:center;min-height:17px}
+.psub{font-size:11.5px;color:var(--ink3);margin-top:7px;line-height:1.5}
+.pairhint{text-align:center;font-size:11px;color:var(--ink3);margin-top:9px}
+@media(max-width:620px){.pair{grid-template-columns:1fr;gap:16px}}
 /* Per-clip observation.  Hidden unless the manifest carries a note for this
    case + system pair, so decks without a note keep their current height. */
-.deckobs{display:none;max-width:430px;margin:7px auto 0;padding:6px 10px;
+.deckobs{display:none;max-width:620px;margin:11px auto 0;padding:6px 10px;
   font-size:11.5px;line-height:1.55;text-align:left;color:var(--ink2);
   background:#fbfbfc;border:1px solid var(--line);border-left:2px solid #c98a2e;border-radius:3px}
 .deckobs.show{display:block}
@@ -136,7 +137,6 @@ tr.total td{font-weight:640;border-top:1.5px solid #d7dde5}
 .dnav{padding:3px 9px;font-size:14px;color:var(--ink3)}
 .dtab:hover,.dnav:hover{border-color:var(--accent);color:var(--accent)}
 .dtab.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
-@media(max-width:700px){.deckstage{--fan:56px}}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;
   transition:.18s}
 .card:hover{border-color:#b9cdf0;box-shadow:0 5px 20px rgba(30,50,90,.09)}
@@ -334,7 +334,7 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
   document.getElementById('ql').innerHTML =
     `<b>Figure 2.</b> ${esc(p.ql_caption)}`;
 
-  /* ---- demos: a deck of systems per case, all driven by the same audio ---- */
+  /* ---- demos: ours beside one baseline per case, both on the same audio ---- */
   const cmp = d.comparison;
 
   /* Corpus-level numbers come from Tables 3-5 (500 clips). Per-clip figures are
@@ -363,30 +363,27 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
       </div>`;
   }
 
-  /* One deck per case.  `systems` is the display order inside every deck:
-     ours first, then the baselines in manifest order. */
-  const systems = [{
+  /* One row per case.  `ours` holds the left pane; `baselines` are what the tabs
+     swap into the right pane.  Latency is deliberately not surfaced here -- the
+     paper reports it, and repeating it beside every clip only invites the reader
+     to weigh speed instead of watching the motion. */
+  const ours = {
     key: 'ours',
-    ours: true,
     label: (cmp && cmp.ours.label) || 'Ours',
     note: 'single pass',
     thumb_dir: 'thumbs',
-    sub: `RTF ${cmp ? cmp.ours.paper_rtf : '—'} \u00b7 single autoregressive pass`,
     src: v => 'videos/' + encodeURIComponent(v.video)
-  }].concat((cmp ? cmp.baselines : []).map(b => ({
+  };
+  const bases = (cmp ? cmp.baselines : []).map(b => ({
     key: b.key,
-    ours: false,
     label: b.label,
     note: 'separate stage',
     thumb_dir: b.thumb_dir,
-    sub: b.paper_rtf === '—'
-      ? 'latency not measured in the paper'
-      : `RTF ${b.paper_rtf} \u00b7 ${b.paper_slowdown} slower to respond`,
     src: v => b.video_dir + '/' + encodeURIComponent(v.name) + '.mp4'
-  })));
-  // tabs are narrow: shorten ours and drop the shared "MO-audio + " prefix.
-  // The full label still appears above the deck, so nothing is lost.
-  const tabName = s => s.ours ? 'Ours' : s.label.replace(/^MO-audio \+\s*/, '');
+  }));
+  // tabs are narrow: drop the shared "MO-audio + " prefix.  The full label still
+  // sits above the pane, so nothing is lost.
+  const tabName = s => s.label.replace(/^MO-audio \+\s*/, '');
 
   /* Cases flagged `hide` in the manifest are dropped here but kept in the data,
      so putting one back is a manifest edit rather than a code change.
@@ -397,86 +394,136 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
     .map((v, i) => [v, i])
     .filter(([v]) => !v.hide)
     .map(([v, i], n) => {
-    // preload="none" keeps 6 cases x 5 systems from firing 30 range requests;
-    // the poster still renders, so the deck looks populated immediately.
-    const cards = systems.map((s, si) => `
-      <div class="dcard${s.ours ? ' ours' : ''}" data-si="${si}">
-        <video src="${esc(s.src(v))}" poster="${esc(s.thumb_dir)}/${encodeURIComponent(v.name)}.jpg"
+    /* preload="none" keeps the poster visible without fetching the media up
+       front; the pair is only two clips, so they load on first play.
+       The baseline is muted and control-less on purpose: it carries the same
+       audio as ours, so a second live track would just echo. */
+    const panes = `
+      <div class="pane ours">
+        <div class="phead"><span class="pname">${esc(ours.label)}</span>
+          <span class="pnote">${esc(ours.note)}</span></div>
+        <video class="vours" src="${esc(ours.src(v))}"
+               poster="${esc(ours.thumb_dir)}/${encodeURIComponent(v.name)}.jpg"
                controls preload="none" playsinline></video>
-      </div>`).join('');
-    const tabs = systems.map((s, si) =>
+      </div>
+      <div class="pane base">
+        <div class="phead"><span class="pname"></span><span class="pnote"></span></div>
+        <video class="vbase" preload="metadata" playsinline muted></video>
+      </div>`;
+    const tabs = bases.map((s, si) =>
       `<button class="dtab" data-si="${si}">${esc(tabName(s))}</button>`).join('');
     return `<div class="cmprow" data-row="${i}">
-      <div class="cno">SAMPLE ${String(n + 1).padStart(2, '0')}
-        &nbsp;·&nbsp; ASR WER ${(v.asr_wer * 100).toFixed(1)}%</div>
+      <div class="cno">SAMPLE ${String(n + 1).padStart(2, '0')}</div>
       <div class="cmpq">${esc(v.question)}</div>
       <div class="cmpa">${esc(v.answer)}</div>
       <div class="deckwrap">
-        <div class="deckhead"><span class="pname"></span><span class="pnote"></span></div>
-        <div class="deckouter"><div class="deckstage">${cards}</div></div>
-        <div class="decksub"></div>
+        <div class="pairouter"><div class="pair">${panes}</div></div>
+        <div class="pairhint">Press play once \u2014 both clips run together on the
+          same response audio.</div>
         <div class="deckobs"></div>
         <div class="decknav">
-          <button class="dnav" data-d="-1" aria-label="previous system">&lsaquo;</button>
+          <button class="dnav" data-d="-1" aria-label="previous baseline">&lsaquo;</button>
           ${tabs}
-          <button class="dnav" data-d="1" aria-label="next system">&rsaquo;</button>
+          <button class="dnav" data-d="1" aria-label="next baseline">&rsaquo;</button>
         </div>
       </div>
     </div>`;
   }).join('');
 
-  /* ---- deck behaviour ---- */
-  // Card k steps behind the front one is pushed right, shrunk and faded, so the
-  // remaining systems stay visible as a stack without competing for attention.
+  /* ---- pair behaviour ---- */
+  /* The right pane follows the tabs.  Swapping baselines mid-playback keeps the
+     current position so the reader compares the same moment, rather than being
+     thrown back to the start. */
   function layout(row) {
-    const cards = [...row.querySelectorAll('.dcard')];
-    const n = cards.length;
-    const active = +row.dataset.active;
-    cards.forEach((c, si) => {
-      const k = (si - active + n) % n;
-      const on = k === 0;
-      c.classList.toggle('active', on);
-      c.style.transform = `translateX(${k * 23}px) scale(${(1 - k * 0.045).toFixed(3)})`;
-      c.style.opacity = on ? 1 : Math.max(0.14, 0.44 - (k - 1) * 0.08).toFixed(2);
-      c.style.zIndex = n - k;
-      if (!on) {                       // never leave a hidden clip playing
-        const vid = c.querySelector('video');
-        if (!vid.paused) vid.pause();
-      }
-    });
-    const s = systems[active];
-    row.querySelector('.deckhead').classList.toggle('ours', !!s.ours);
-    row.querySelector('.deckhead .pname').textContent = s.label;
-    row.querySelector('.deckhead .pnote').textContent = s.note;
-    row.querySelector('.decksub').textContent = s.sub;
+    const si = +row.dataset.active;
+    const s = bases[si];
+    const a = row.querySelector('.vours');
+    const b = row.querySelector('.vbase');
+    const head = row.querySelector('.pane.base .phead');
+    head.querySelector('.pname').textContent = s.label;
+    head.querySelector('.pnote').textContent = s.note;
+
+    const v = it[+row.dataset.row] || {};
+    /* Only the src changes here.  preload="metadata" on the baseline guarantees a
+       loadedmetadata event on every swap, which is what the listener in bindSync
+       uses to restore position; load() is deliberately not called, because it
+       would restart the fetch and discard a seek already applied. */
+    b.poster = s.thumb_dir + '/' + encodeURIComponent(v.name) + '.jpg';
+    const next = s.src(v);
+    if (!b.src.endsWith(next)) {
+      b.src = next;
+      // A swap during playback must keep running, not stall on the new poster.
+      if (!a.paused) b.play().catch(() => {});
+    }
+
     /* Qualitative note for this one clip.  Labelled "in this clip" on purpose:
        these are single-case observations, not the paper's measured results. */
-    const obs = (it[+row.dataset.row] || {}).obs || {};
-    const text = obs[s.key];
+    const text = (v.obs || {})[s.key];
     const box = row.querySelector('.deckobs');
     box.innerHTML = text ? '<b>In this clip</b>' + esc(text) : '';
     box.classList.toggle('show', !!text);
     row.querySelectorAll('.dtab').forEach(t =>
-      t.classList.toggle('on', +t.dataset.si === active));
+      t.classList.toggle('on', +t.dataset.si === si));
+  }
+
+  /* Ours is the clock: it owns the controls and the only audible track, and the
+     baseline mirrors it.  Mirroring beats starting both by hand because the two
+     elements buffer independently -- following play/pause/seek events keeps them
+     from drifting apart. */
+  function bindSync(row) {
+    const a = row.querySelector('.vours');
+    const b = row.querySelector('.vbase');
+    /* Two tolerances on purpose.  Chasing a few milliseconds means seeking
+       several times a second, and every seek re-decodes -- the baseline visibly
+       stutters.  So correct tightly at the moments the pair can genuinely be out
+       of step (a swap, a seek, a fresh play) and otherwise only step in once the
+       gap passes roughly four frames, which is where it starts to show. */
+    const TIGHT = 0.02, LOOSE = 0.15;
+    const sync = tol => {
+      // A seek before metadata arrives is discarded, so wait for readyState.
+      if (b.readyState < 1 || !isFinite(a.currentTime)) return;
+      /* Skip while a seek is still in flight.  Without this the pair thrashes:
+         seeking re-buffers, ours advances meanwhile, canplay fires, we seek
+         again -- dozens of times per swap, which is exactly the stutter the
+         tolerances above are meant to avoid. */
+      if (b.seeking) return;
+      if (Math.abs(b.currentTime - a.currentTime) > tol) b.currentTime = a.currentTime;
+    };
+    const align = () => sync(TIGHT);
+    /* Fires on the first load and again after every baseline swap, which is what
+       restores position and playback when switching mid-clip. */
+    b.addEventListener('loadedmetadata', () => {
+      align();
+      if (!a.paused) b.play().catch(() => {});
+    });
+    // A just-swapped clip needs a second nudge once it can really decode.
+    b.addEventListener('canplay', align);
+    a.addEventListener('play', () => { align(); b.play().catch(() => {}); });
+    a.addEventListener('pause', () => b.pause());
+    a.addEventListener('seeked', align);
+    a.addEventListener('ratechange', () => { b.playbackRate = a.playbackRate; });
+    // Steady-state drift is tiny, so the regular tick uses the loose tolerance.
+    a.addEventListener('timeupdate', () => sync(LOOSE));
+    a.addEventListener('ended', () => { b.pause(); align(); });
+    // The baseline has no controls of its own; clicking it drives the pair.
+    b.addEventListener('click', () => { a.paused ? a.play() : a.pause(); });
   }
 
   document.querySelectorAll('#grid .cmprow').forEach(row => {
     row.dataset.active = 0;
+    bindSync(row);                   // listen before the first src is assigned
     layout(row);
   });
 
   document.getElementById('grid').addEventListener('click', e => {
     const row = e.target.closest('.cmprow');
     if (!row) return;
-    const n = systems.length;
+    const n = bases.length;
     const nav = e.target.closest('.dnav');
     const tab = e.target.closest('.dtab');
-    const card = e.target.closest('.dcard');
     let next = null;
     if (nav) next = (+row.dataset.active + +nav.dataset.d + n) % n;
     else if (tab) next = +tab.dataset.si;
-    // clicking the front card must fall through to its own video controls
-    else if (card && !card.classList.contains('active')) next = +card.dataset.si;
     if (next === null || next === +row.dataset.active) return;
     row.dataset.active = next;
     layout(row);
