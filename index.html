@@ -93,34 +93,32 @@ tr.total td{font-weight:640;border-top:1.5px solid #d7dde5}
 /* demos */
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(292px,1fr));gap:20px;margin-top:30px}
 /* Same-audio comparison: one row per case.  Ours and one baseline sit side by
-   side and play together off the same response audio, so the motion is the only
-   thing that differs.  Tabs swap which baseline occupies the right pane. */
+   side in a single pre-composited clip, so the motion is the only thing that
+   differs.  Tabs swap which baseline the clip pairs ours with. */
 .cmp{display:flex;flex-direction:column;gap:26px;margin-top:28px}
 .cmprow{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px 20px}
 .cmpq{font-size:14.5px;font-weight:600;line-height:1.5}
 .cmpa{font-size:13px;color:var(--ink2);margin-top:7px;line-height:1.62}
 .deckwrap{margin-top:16px}
-/* Two panes side by side: ours on the left, the selected baseline on the right.
-   Both clips come from the same response audio and are the same length, so the
-   pair plays in lockstep and the only visible difference is the motion. */
+/* One pre-composited clip holds both halves: ours on the left, the selected
+   baseline on the right.  See tools/make_pairs.sh for why this is a single file
+   rather than two <video> elements -- in short, one decoder cannot drift out of
+   step with itself, and there is no play() that can fail on only one side.
+   The 9:8 box is two 9:16 halves side by side. */
 .pairouter{display:flex;justify-content:center}
-.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;
-  width:min(620px,100%)}
-.pane{min-width:0}
+.pair{width:min(620px,100%)}
+/* The labels sit in a 2-column grid over the clip, so each one is centred on
+   the half it names; the video's own seam falls exactly between them. */
+.pairhead{display:grid;grid-template-columns:repeat(2,1fr);gap:0;margin-bottom:7px}
 .phead{display:flex;align-items:baseline;justify-content:center;gap:7px;
-  flex-wrap:wrap;min-height:19px;margin-bottom:7px}
-.pane video{width:100%;display:block;aspect-ratio:9/16;object-fit:cover;
-  background:#101418;border:1px solid var(--line);border-radius:10px}
-.pane.ours video{border-color:var(--accent)}
-/* The baseline is muted and has no controls of its own: the audio is identical,
-   so two live tracks would only echo.  Clicking it drives the pair instead. */
-.pane.base video{cursor:pointer}
+  flex-wrap:wrap;min-height:19px}
+.pair video{width:100%;display:block;aspect-ratio:9/8;background:#101418;
+  border:1px solid var(--line);border-radius:10px}
 .pname{font-size:13.5px;font-weight:650}
-.pane.ours .pname{color:var(--accent)}
+.phead.ours .pname{color:var(--accent)}
 .pnote{font-size:11.5px;color:var(--ink3)}
 .psub{font-size:11.5px;color:var(--ink3);margin-top:7px;line-height:1.5}
 .pairhint{text-align:center;font-size:11px;color:var(--ink3);margin-top:9px}
-@media(max-width:620px){.pair{grid-template-columns:1fr;gap:16px}}
 /* Per-clip observation.  Hidden unless the manifest carries a note for this
    case + system pair, so decks without a note keep their current height. */
 .deckobs{display:none;max-width:620px;margin:11px auto 0;padding:6px 10px;
@@ -363,23 +361,18 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
       </div>`;
   }
 
-  /* One row per case.  `ours` holds the left pane; `baselines` are what the tabs
-     swap into the right pane.  Latency is deliberately not surfaced here -- the
-     paper reports it, and repeating it beside every clip only invites the reader
-     to weigh speed instead of watching the motion. */
-  const ours = {
-    key: 'ours',
-    label: (cmp && cmp.ours.label) || 'Ours',
-    note: 'single pass',
-    thumb_dir: 'thumbs',
-    src: v => 'videos/' + encodeURIComponent(v.video)
-  };
+  /* One row per case.  Each baseline has a pre-composited clip that already
+     contains ours on the left and that baseline on the right; the tabs pick
+     which file plays.  Latency is deliberately not surfaced here -- the paper
+     reports it, and repeating it beside every clip only invites the reader to
+     weigh speed instead of watching the motion. */
+  const oursLabel = (cmp && cmp.ours.label) || 'Ours';
   const bases = (cmp ? cmp.baselines : []).map(b => ({
     key: b.key,
     label: b.label,
-    note: 'separate stage',
-    thumb_dir: b.thumb_dir,
-    src: v => b.video_dir + '/' + encodeURIComponent(v.name) + '.mp4'
+    // Built by tools/make_pairs.sh; the name pairs the case with the baseline.
+    src: v => 'videos_pair/' + encodeURIComponent(v.name + '__' + b.key) + '.mp4',
+    poster: v => 'thumbs_pair/' + encodeURIComponent(v.name + '__' + b.key) + '.jpg'
   }));
   // tabs are narrow: drop the shared "MO-audio + " prefix.  The full label still
   // sits above the pane, so nothing is lost.
@@ -394,22 +387,9 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
     .map((v, i) => [v, i])
     .filter(([v]) => !v.hide)
     .map(([v, i], n) => {
-    /* preload="none" keeps the poster visible without fetching the media up
-       front; the pair is only two clips, so they load on first play.
-       The baseline is muted and control-less on purpose: it carries the same
-       audio as ours, so a second live track would just echo. */
-    const panes = `
-      <div class="pane ours">
-        <div class="phead"><span class="pname">${esc(ours.label)}</span>
-          <span class="pnote">${esc(ours.note)}</span></div>
-        <video class="vours" src="${esc(ours.src(v))}"
-               poster="${esc(ours.thumb_dir)}/${encodeURIComponent(v.name)}.jpg"
-               controls preload="none" playsinline></video>
-      </div>
-      <div class="pane base">
-        <div class="phead"><span class="pname"></span><span class="pnote"></span></div>
-        <video class="vbase" preload="metadata" playsinline muted></video>
-      </div>`;
+    /* preload="none" fetches nothing until play, so the row costs one poster.
+       The clip already contains both halves, so there is a single element, a
+       single audio track and no cross-element synchronisation to get wrong. */
     const tabs = bases.map((s, si) =>
       `<button class="dtab" data-si="${si}">${esc(tabName(s))}</button>`).join('');
     return `<div class="cmprow" data-row="${i}">
@@ -417,9 +397,17 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
       <div class="cmpq">${esc(v.question)}</div>
       <div class="cmpa">${esc(v.answer)}</div>
       <div class="deckwrap">
-        <div class="pairouter"><div class="pair">${panes}</div></div>
-        <div class="pairhint">Press play once \u2014 both clips run together on the
-          same response audio.</div>
+        <div class="pairouter"><div class="pair">
+          <div class="pairhead">
+            <div class="phead ours"><span class="pname">${esc(oursLabel)}</span>
+              <span class="pnote">single pass</span></div>
+            <div class="phead base"><span class="pname"></span>
+              <span class="pnote">separate stage</span></div>
+          </div>
+          <video class="vpair" controls preload="none" playsinline></video>
+        </div></div>
+        <div class="pairhint">One clip, both systems \u2014 same response audio,
+          so the motion is the only difference.</div>
         <div class="deckobs"></div>
         <div class="decknav">
           <button class="dnav" data-d="-1" aria-label="previous baseline">&lsaquo;</button>
@@ -431,29 +419,22 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
   }).join('');
 
   /* ---- pair behaviour ---- */
-  /* The right pane follows the tabs.  Swapping baselines mid-playback keeps the
-     current position so the reader compares the same moment, rather than being
-     thrown back to the start. */
+  /* Switching baselines swaps the whole clip, so playback restarts.  That is the
+     deliberate trade for never showing a half-frozen comparison: there is no
+     second element to keep in step, and no way for one side to stall alone. */
   function layout(row) {
-    const si = +row.dataset.active;
-    const s = bases[si];
-    const a = row.querySelector('.vours');
-    const b = row.querySelector('.vbase');
-    const head = row.querySelector('.pane.base .phead');
-    head.querySelector('.pname').textContent = s.label;
-    head.querySelector('.pnote').textContent = s.note;
-
+    const s = bases[+row.dataset.active];
     const v = it[+row.dataset.row] || {};
-    /* Only the src changes here.  preload="metadata" on the baseline guarantees a
-       loadedmetadata event on every swap, which is what the listener in bindSync
-       uses to restore position; load() is deliberately not called, because it
-       would restart the fetch and discard a seek already applied. */
-    b.poster = s.thumb_dir + '/' + encodeURIComponent(v.name) + '.jpg';
+    const vid = row.querySelector('.vpair');
+    row.querySelector('.phead.base .pname').textContent = s.label;
+
     const next = s.src(v);
-    if (!b.src.endsWith(next)) {
-      b.src = next;
-      // A swap during playback must keep running, not stall on the new poster.
-      if (!a.paused) b.play().catch(() => {});
+    if (!vid.getAttribute('src') || !vid.src.endsWith(next)) {
+      const wasPlaying = !vid.paused && !vid.ended;
+      vid.poster = s.poster(v);
+      vid.src = next;
+      // Keep going across a swap so the reader is not made to press play again.
+      if (wasPlaying) vid.play().catch(() => {});
     }
 
     /* Qualitative note for this one clip.  Labelled "in this clip" on purpose:
@@ -463,55 +444,11 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
     box.innerHTML = text ? '<b>In this clip</b>' + esc(text) : '';
     box.classList.toggle('show', !!text);
     row.querySelectorAll('.dtab').forEach(t =>
-      t.classList.toggle('on', +t.dataset.si === si));
-  }
-
-  /* Ours is the clock: it owns the controls and the only audible track, and the
-     baseline mirrors it.  Mirroring beats starting both by hand because the two
-     elements buffer independently -- following play/pause/seek events keeps them
-     from drifting apart. */
-  function bindSync(row) {
-    const a = row.querySelector('.vours');
-    const b = row.querySelector('.vbase');
-    /* Two tolerances on purpose.  Chasing a few milliseconds means seeking
-       several times a second, and every seek re-decodes -- the baseline visibly
-       stutters.  So correct tightly at the moments the pair can genuinely be out
-       of step (a swap, a seek, a fresh play) and otherwise only step in once the
-       gap passes roughly four frames, which is where it starts to show. */
-    const TIGHT = 0.02, LOOSE = 0.15;
-    const sync = tol => {
-      // A seek before metadata arrives is discarded, so wait for readyState.
-      if (b.readyState < 1 || !isFinite(a.currentTime)) return;
-      /* Skip while a seek is still in flight.  Without this the pair thrashes:
-         seeking re-buffers, ours advances meanwhile, canplay fires, we seek
-         again -- dozens of times per swap, which is exactly the stutter the
-         tolerances above are meant to avoid. */
-      if (b.seeking) return;
-      if (Math.abs(b.currentTime - a.currentTime) > tol) b.currentTime = a.currentTime;
-    };
-    const align = () => sync(TIGHT);
-    /* Fires on the first load and again after every baseline swap, which is what
-       restores position and playback when switching mid-clip. */
-    b.addEventListener('loadedmetadata', () => {
-      align();
-      if (!a.paused) b.play().catch(() => {});
-    });
-    // A just-swapped clip needs a second nudge once it can really decode.
-    b.addEventListener('canplay', align);
-    a.addEventListener('play', () => { align(); b.play().catch(() => {}); });
-    a.addEventListener('pause', () => b.pause());
-    a.addEventListener('seeked', align);
-    a.addEventListener('ratechange', () => { b.playbackRate = a.playbackRate; });
-    // Steady-state drift is tiny, so the regular tick uses the loose tolerance.
-    a.addEventListener('timeupdate', () => sync(LOOSE));
-    a.addEventListener('ended', () => { b.pause(); align(); });
-    // The baseline has no controls of its own; clicking it drives the pair.
-    b.addEventListener('click', () => { a.paused ? a.play() : a.pause(); });
+      t.classList.toggle('on', +t.dataset.si === +row.dataset.active));
   }
 
   document.querySelectorAll('#grid .cmprow').forEach(row => {
     row.dataset.active = 0;
-    bindSync(row);                   // listen before the first src is assigned
     layout(row);
   });
 
