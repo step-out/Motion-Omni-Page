@@ -256,9 +256,12 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
   document.getElementById('authors').innerHTML =
     `<div class="names">${nameLine}</div><div class="affs">${affLine}</div>${note}`;
 
+  /* arXiv is the paper: a separate PDF button pointed at the same artifact, so
+     it is gone.  A key with no URL yet renders as a disabled "Coming soon" chip
+     rather than disappearing, so the row does not reflow once arXiv is live. */
   const L = [
-    ['arxiv', 'arXiv', '📄'], ['pdf', 'Paper', '📕'],
-    ['code', 'Code', '💻'], ['bibtex', 'BibTeX', '❞']
+    ['arxiv', 'arXiv', '📄'], ['code', 'Code', '💻'],
+    ['hf', 'Data', '🤗'], ['bibtex', 'BibTeX', '❞']
   ];
   document.getElementById('links').innerHTML = L.map(([k, label, ic]) => {
     if (k === 'bibtex')
