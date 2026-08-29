@@ -85,6 +85,9 @@ tr.ours{background:var(--ours)}
 tr.ours td{font-weight:640}
 tr.ours td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
 tr.teacher td:first-child{color:var(--ink2)}
+/* Matches the paper's blue marking: these arms share our speech audio, so they
+   are the rows that isolate the motion pathway. */
+tr.sameaudio td:first-child{color:var(--accent);font-weight:600}
 tr.total td{font-weight:640;border-top:1.5px solid #d7dde5}
 .b1{color:var(--best);font-weight:700;background:var(--best-bg);border-radius:4px;padding:1px 6px}
 .b2{text-decoration:underline;text-decoration-color:#b9c3d0;text-underline-offset:3px}
@@ -179,7 +182,6 @@ footer{padding:38px 0 52px;text-align:center;color:var(--ink3);font-size:13px;
 <section>
   <div class="wrap">
     <h2>Video Samples</h2>
-    <div id="cmpkey"></div>
     <div class="cmp" id="grid"></div>
   </div>
 </section>
@@ -312,9 +314,25 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
      <div class="note">Rows in grey run the LOM motion teacher at inference time, which the
       teacher-referenced columns structurally favour.</div></div>`);
 
+  /* Human preference sits here because it is the perceptual counterpart to the
+     automatic motion metrics above, not a footnote to latency.  The first column
+     is left-aligned prose; the rest are counts. */
+  const hu = p.human;
+  out.push(`<div class="tbl"><div class="tcap"><b>Table 3.</b> ${hu.caption}</div>
+    <table><thead><tr>${hu.cols.map((c, i) =>
+      `<th${i ? '' : ' style="text-align:left"'}>${esc(c)}</th>`).join('')}</tr></thead><tbody>` +
+    hu.rows.map((r, ri) =>
+      `<tr class="${hu.same_audio_rows.includes(ri) ? 'sameaudio' : ''}">` +
+      `<td style="text-align:left">${esc(r[0])}</td>` +
+      r.slice(1).map(c => Array.isArray(c) ? `<td>${mk(esc(c[0]), c[1])}</td>`
+                                           : `<td>${esc(c)}</td>`).join('') +
+      `</tr>`).join('') +
+    `</tbody></table>
+     <div class="note">${esc(hu.note)}</div></div>`);
+
   // latency
   const la = p.latency;
-  out.push(`<div class="tbl"><div class="tcap"><b>Table 3.</b> ${la.caption}</div>
+  out.push(`<div class="tbl"><div class="tcap"><b>Table 4.</b> ${la.caption}</div>
     <table><thead><tr>${la.cols.map((c, i) =>
       `<th>${esc(c)}${i && i < 3 ? ' ↓' : ''}</th>`).join('')}</tr></thead><tbody>` +
     la.rows.map((r, ri) =>
@@ -324,7 +342,7 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
 
   // data
   const da = p.data;
-  out.push(`<div class="tbl"><div class="tcap"><b>Table 4.</b> ${da.caption}</div>
+  out.push(`<div class="tbl"><div class="tcap"><b>Table 5.</b> ${da.caption}</div>
     <table><thead><tr>${da.cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>` +
     da.rows.map((r, ri) =>
       `<tr class="${ri === da.rows.length - 1 ? 'total' : ''}">` +
@@ -337,32 +355,6 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
 
   /* ---- demos: ours beside one baseline per case, both on the same audio ---- */
   const cmp = d.comparison;
-
-  /* Corpus-level numbers come from Tables 3-5 (500 clips). Per-clip figures are
-     deliberately not shown: six clips are too few to reproduce a corpus
-     statistic, and quoting a subset value that disagrees with the paper would
-     undercut the very comparison this section is making. */
-  if (cmp) {
-    const head = ['', 'BC<sub>bi</sub> ↑', 'Diversity ↑', 'RTF ↓', 'Slowdown',
-                  'Human pref. W/T/L'];
-    const body = [[cmp.ours.label, cmp.ours.paper_bc, cmp.ours.paper_div,
-                   cmp.ours.paper_rtf, cmp.ours.paper_slowdown, cmp.ours.paper_pref || '—']]
-      .concat(cmp.baselines.map(b =>
-        [b.label, b.paper_bc, b.paper_div, b.paper_rtf, b.paper_slowdown,
-         b.paper_pref || '—']));
-    document.getElementById('cmpkey').innerHTML =
-      `<div class="tbl" style="margin-top:22px">
-        <div class="tcap"><b>Reference numbers</b> — measured over all 500 SwDA-500 clips
-         (Tables 3–5), not over these six. Human preference is ours versus that baseline,
-         wins/ties/losses pooled over rhythm, semantics and naturalness.</div>
-        <table><thead><tr>${head.map((c, i) =>
-          `<th${i ? '' : ' style="text-align:left"'}>${c}</th>`).join('')}</tr></thead>
-        <tbody>${body.map((r, ri) =>
-          `<tr class="${ri === 0 ? 'ours' : ''}">` +
-          r.map((c, i) => `<td${i ? '' : ' style="text-align:left"'}>${esc(c)}</td>`).join('') +
-          `</tr>`).join('')}</tbody></table>
-      </div>`;
-  }
 
   /* One row per case.  Each baseline has a pre-composited clip that already
      contains ours on the left and that baseline on the right; the tabs pick

@@ -607,6 +607,63 @@
       ],
       "ours_row": 8
     },
+    "human": {
+      "caption": "Exploratory human preference, Motion-Omni-Q7 versus each baseline. Four annotators independently rated 25 paired clips per arm on three motion-related dimensions, with per-pair verdicts by majority vote. Cells are MO wins/ties/losses. The final column pools each outcome over the three dimensions and reports the wins-minus-losses margin.",
+      "cols": [
+        "Comparison",
+        "R1 Rhythm",
+        "R2 Semantics",
+        "R3 Naturalness",
+        "Pooled W/T/L (W−L)"
+      ],
+      "rows": [
+        [
+          "Qwen2.5-Omni + LOM",
+          "12/3/10",
+          "13/0/12",
+          "10/3/12",
+          [
+            "35/6/34 (+1)",
+            0
+          ]
+        ],
+        [
+          "Qwen2.5-Omni + EMAGE",
+          "7/2/16",
+          "10/3/12",
+          "16/4/5",
+          [
+            "33/9/33 (0)",
+            0
+          ]
+        ],
+        [
+          "MO-audio + LOM",
+          "5/12/8",
+          "9/8/8",
+          "11/7/7",
+          [
+            "25/27/23 (+2)",
+            2
+          ]
+        ],
+        [
+          "MO-audio + EMAGE",
+          "13/7/5",
+          "15/3/7",
+          "17/0/8",
+          [
+            "45/10/20 (+25)",
+            1
+          ]
+        ]
+      ],
+      "same_audio_rows": [
+        2,
+        3
+      ],
+      "note": "Rows in blue share the same Motion-Omni speech audio, so differences there reflect the motion pathway alone. The other two arms also differ in speech, so they do not isolate motion. Four annotators on 25 pairs per arm is a small study; the paper reports it as exploratory."
+    },
     "latency": {
       "caption": "Response latency on SwDA-500 (non-streaming, full-utterance generation). Slowdown is relative to our model.",
       "cols": [
@@ -764,57 +821,32 @@
         "label": "MO-audio + LOM",
         "detail": "Our audio, motion from LOM (the teacher this model distils from)",
         "video_dir": "videos_lom",
-        "thumb_dir": "thumbs_lom",
-        "paper_bc": "9.05",
-        "paper_div": "13.07",
-        "paper_rtf": "4.39",
-        "paper_slowdown": "5.4x",
-        "paper_pref": "25/27/23 (+2)"
+        "thumb_dir": "thumbs_lom"
       },
       {
         "key": "glsm",
         "label": "MO-audio + GestureLSM",
         "detail": "Our audio, motion from GestureLSM (flow-matching latent model)",
         "video_dir": "videos_glsm",
-        "thumb_dir": "thumbs_glsm",
-        "paper_bc": "9.11",
-        "paper_div": "13.55",
-        "paper_rtf": "—",
-        "paper_slowdown": "—",
-        "paper_pref": "—"
+        "thumb_dir": "thumbs_glsm"
       },
       {
         "key": "emage",
         "label": "MO-audio + EMAGE",
         "detail": "Our audio, motion from EMAGE",
         "video_dir": "videos_emage",
-        "thumb_dir": "thumbs_emage",
-        "paper_bc": "8.73",
-        "paper_div": "10.95",
-        "paper_rtf": "0.84",
-        "paper_slowdown": "1.1x",
-        "paper_pref": "45/10/20 (+25)"
+        "thumb_dir": "thumbs_emage"
       },
       {
         "key": "mamba",
         "label": "MO-audio + MambaTalk",
         "detail": "Our audio, motion from MambaTalk",
         "video_dir": "videos_mamba",
-        "thumb_dir": "thumbs_mamba",
-        "paper_bc": "8.60",
-        "paper_div": "12.07",
-        "paper_rtf": "—",
-        "paper_slowdown": "—",
-        "paper_pref": "—"
+        "thumb_dir": "thumbs_mamba"
       }
     ],
     "ours": {
-      "label": "Motion-Omni-Q7 (ours)",
-      "paper_bc": "9.07",
-      "paper_div": "13.67",
-      "paper_rtf": "0.78",
-      "paper_slowdown": "1.0x",
-      "paper_pref": "—"
+      "label": "Motion-Omni-Q7 (ours)"
     }
   }
 }
