@@ -9,6 +9,8 @@
   --bg:#f7f8fa; --panel:#ffffff; --ink:#1c2430; --ink2:#5b6675; --ink3:#8a95a3;
   --line:#e3e7ed; --accent:#2f6bd8; --accent-soft:#eef3fd;
   --best:#1a7f4b; --best-bg:#e8f6ee; --ours:#f7f9ff;
+  /* Preference bar segments, taken from the paper's mowin / motie / moloss. */
+  --win:#2E7D32; --tie:#9E9E9E; --loss:#C62828;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -88,6 +90,27 @@ tr.teacher td:first-child{color:var(--ink2)}
 /* Matches the paper's blue marking: these arms share our speech audio, so they
    are the rows that isolate the motion pathway. */
 tr.sameaudio td:first-child{color:var(--accent);font-weight:600}
+/* Win/tie/loss as a stacked bar, matching the paper's \prefbar and its colours.
+   Every cell in a column shares a denominator -- 25 per dimension, 75 pooled --
+   so segment widths are directly comparable down a column.  132px keeps even the
+   narrowest segment in the data (2/25 and 6/75, both 10.6px) wide enough to hold
+   its own digit, so no count has to be dropped or pushed outside the bar. */
+.pcell{display:flex;align-items:center;gap:10px;justify-content:flex-end}
+.pbar{display:flex;width:132px;flex:none;height:18px;border-radius:3px;overflow:hidden}
+.pbar i{display:flex;align-items:center;justify-content:center;font-style:normal;
+  font-size:9.5px;font-weight:700;color:#fff;line-height:1;letter-spacing:-.2px}
+/* One definition per colour, shared by the bar and the legend, so the two can
+   never drift apart.  Values are the paper's mowin / motie / moloss. */
+.pw{background:var(--win)}
+.pt{background:var(--tie)}
+.pl{background:var(--loss)}
+/* Fixed, not min-width: the marked margin sits in a padded badge and is wider
+   than a plain one, which would otherwise push that row's bar out of column. */
+.pmarg{font-size:13px;width:38px;flex:none;text-align:right}
+/* Legend swatches reuse the bar colours so the mapping is unambiguous. */
+.pkey{display:flex;gap:15px;flex-wrap:wrap;margin-top:13px;font-size:12px;color:var(--ink3)}
+.pkey span{display:inline-flex;align-items:center;gap:5px}
+.pkey b{width:9px;height:9px;border-radius:2px;display:inline-block}
 tr.total td{font-weight:640;border-top:1.5px solid #d7dde5}
 .b1{color:var(--best);font-weight:700;background:var(--best-bg);border-radius:4px;padding:1px 6px}
 .b2{text-decoration:underline;text-decoration-color:#b9c3d0;text-underline-offset:3px}
@@ -318,16 +341,36 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
      automatic motion metrics above, not a footnote to latency.  The first column
      is left-aligned prose; the rest are counts. */
   const hu = p.human;
+  /* A stacked bar per cell instead of "12/3/10": the win/loss balance is the
+     thing being read, and a colour ratio carries that at a glance where three
+     slash-separated counts do not.  The counts stay inside the segments, so
+     nothing is traded away for the picture. */
+  const bar = (wtl, total) => {
+    const seg = [['pw', wtl[0]], ['pt', wtl[1]], ['pl', wtl[2]]];
+    return `<div class="pbar" title="${wtl[0]} wins, ${wtl[1]} ties, ${wtl[2]} losses">` +
+      // A zero segment is omitted rather than drawn 0px wide, which would still
+      // render its border-radius as a sliver of the wrong colour.
+      seg.filter(([, n]) => n > 0)
+         .map(([cls, n]) => `<i class="${cls}" style="width:${n / total * 100}%">${n}</i>`)
+         .join('') + `</div>`;
+  };
+  // Swatch classes are the bar's own, so the legend cannot show a stale colour.
+  const key = Object.entries(hu.legend)
+    .map(([k, label]) => `<span><b class="p${k[0]}"></b>${esc(label)}</span>`)
+    .join('');
   out.push(`<div class="tbl"><div class="tcap"><b>Table 3.</b> ${hu.caption}</div>
     <table><thead><tr>${hu.cols.map((c, i) =>
       `<th${i ? '' : ' style="text-align:left"'}>${esc(c)}</th>`).join('')}</tr></thead><tbody>` +
     hu.rows.map((r, ri) =>
       `<tr class="${hu.same_audio_rows.includes(ri) ? 'sameaudio' : ''}">` +
-      `<td style="text-align:left">${esc(r[0])}</td>` +
-      r.slice(1).map(c => Array.isArray(c) ? `<td>${mk(esc(c[0]), c[1])}</td>`
-                                           : `<td>${esc(c)}</td>`).join('') +
+      `<td style="text-align:left">${esc(r.name)}</td>` +
+      // Each dimension is 25 pairs; the pooled column sums those three.
+      r.dims.map(d => `<td>${bar(d, 25)}</td>`).join('') +
+      `<td><div class="pcell">${bar(r.pooled, 75)}` +
+      `<span class="pmarg">${mk(esc(r.margin), r.mark)}</span></div></td>` +
       `</tr>`).join('') +
     `</tbody></table>
+     <div class="pkey">${key}</div>
      <div class="note">${esc(hu.note)}</div></div>`);
 
   // latency

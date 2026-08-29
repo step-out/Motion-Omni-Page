@@ -608,7 +608,7 @@
       "ours_row": 8
     },
     "human": {
-      "caption": "Exploratory human preference, Motion-Omni-Q7 versus each baseline. Four annotators independently rated 25 paired clips per arm on three motion-related dimensions, with per-pair verdicts by majority vote. Cells are MO wins/ties/losses. The final column pools each outcome over the three dimensions and reports the wins-minus-losses margin.",
+      "caption": "Exploratory human preference, Motion-Omni-Q7 versus each baseline. Four annotators independently rated 25 paired clips per arm on three motion-related dimensions, with per-pair verdicts by majority vote. Each bar reads left to right as MO wins, ties and losses, over 25 pairs. The final column pools each outcome over the three dimensions and reports the wins-minus-losses margin.",
       "cols": [
         "Comparison",
         "R1 Rhythm",
@@ -617,52 +617,125 @@
         "Pooled W/T/L (W−L)"
       ],
       "rows": [
-        [
-          "Qwen2.5-Omni + LOM",
-          "12/3/10",
-          "13/0/12",
-          "10/3/12",
-          [
-            "35/6/34 (+1)",
-            0
-          ]
-        ],
-        [
-          "Qwen2.5-Omni + EMAGE",
-          "7/2/16",
-          "10/3/12",
-          "16/4/5",
-          [
-            "33/9/33 (0)",
-            0
-          ]
-        ],
-        [
-          "MO-audio + LOM",
-          "5/12/8",
-          "9/8/8",
-          "11/7/7",
-          [
-            "25/27/23 (+2)",
-            2
-          ]
-        ],
-        [
-          "MO-audio + EMAGE",
-          "13/7/5",
-          "15/3/7",
-          "17/0/8",
-          [
-            "45/10/20 (+25)",
-            1
-          ]
-        ]
+        {
+          "name": "Qwen2.5-Omni + LOM",
+          "dims": [
+            [
+              12,
+              3,
+              10
+            ],
+            [
+              13,
+              0,
+              12
+            ],
+            [
+              10,
+              3,
+              12
+            ]
+          ],
+          "pooled": [
+            35,
+            6,
+            34
+          ],
+          "margin": "+1",
+          "mark": 0
+        },
+        {
+          "name": "Qwen2.5-Omni + EMAGE",
+          "dims": [
+            [
+              7,
+              2,
+              16
+            ],
+            [
+              10,
+              3,
+              12
+            ],
+            [
+              16,
+              4,
+              5
+            ]
+          ],
+          "pooled": [
+            33,
+            9,
+            33
+          ],
+          "margin": "0",
+          "mark": 0
+        },
+        {
+          "name": "MO-audio + LOM",
+          "dims": [
+            [
+              5,
+              12,
+              8
+            ],
+            [
+              9,
+              8,
+              8
+            ],
+            [
+              11,
+              7,
+              7
+            ]
+          ],
+          "pooled": [
+            25,
+            27,
+            23
+          ],
+          "margin": "+2",
+          "mark": 2
+        },
+        {
+          "name": "MO-audio + EMAGE",
+          "dims": [
+            [
+              13,
+              7,
+              5
+            ],
+            [
+              15,
+              3,
+              7
+            ],
+            [
+              17,
+              0,
+              8
+            ]
+          ],
+          "pooled": [
+            45,
+            10,
+            20
+          ],
+          "margin": "+25",
+          "mark": 1
+        }
       ],
       "same_audio_rows": [
         2,
         3
       ],
-      "note": "Rows in blue share the same Motion-Omni speech audio, so differences there reflect the motion pathway alone. The other two arms also differ in speech, so they do not isolate motion. Four annotators on 25 pairs per arm is a small study; the paper reports it as exploratory."
+      "note": "Rows in blue share the same Motion-Omni speech audio, so differences there reflect the motion pathway alone. The other two arms also differ in speech, so they do not isolate motion. Four annotators on 25 pairs per arm is a small study; the paper reports it as exploratory.",
+      "legend": {
+        "win": "MO wins",
+        "tie": "ties",
+        "loss": "MO losses"
+      }
     },
     "latency": {
       "caption": "Response latency on SwDA-500 (non-streaming, full-utterance generation). Slowdown is relative to our model.",
