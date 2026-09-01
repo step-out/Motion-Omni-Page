@@ -87,9 +87,6 @@ tr.ours{background:var(--ours)}
 tr.ours td{font-weight:640}
 tr.ours td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
 tr.teacher td:first-child{color:var(--ink2)}
-/* Matches the paper's blue marking: these arms share our speech audio, so they
-   are the rows that isolate the motion pathway. */
-tr.sameaudio td:first-child{color:var(--accent);font-weight:600}
 /* Win/tie/loss as a stacked bar, matching the paper's \prefbar and its colours.
    Every cell in a column shares a denominator -- 25 per dimension, 75 pooled --
    so segment widths are directly comparable down a column.  132px keeps even the
@@ -361,8 +358,11 @@ fetch('manifest.json', { cache: 'no-store' }).then(r => r.json()).then(d => {
   out.push(`<div class="tbl"><div class="tcap"><b>Table 3.</b> ${hu.caption}</div>
     <table><thead><tr>${hu.cols.map((c, i) =>
       `<th${i ? '' : ' style="text-align:left"'}>${esc(c)}</th>`).join('')}</tr></thead><tbody>` +
-    hu.rows.map((r, ri) =>
-      `<tr class="${hu.same_audio_rows.includes(ri) ? 'sameaudio' : ''}">` +
+    hu.rows.map(r =>
+      // A group row separates the same-audio arms, as the paper does, instead of
+      // recolouring their names: the grouping then survives in greyscale too.
+      (r.group ? `<tr class="sub"><td colspan="${hu.cols.length}">${esc(r.group)}</td></tr>` : '') +
+      `<tr>` +
       `<td style="text-align:left">${esc(r.name)}</td>` +
       // Each dimension is 25 pairs; the pooled column sums those three.
       r.dims.map(d => `<td>${bar(d, 25)}</td>`).join('') +

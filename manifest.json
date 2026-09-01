@@ -261,7 +261,7 @@
       ]
     },
     "motion": {
-      "caption": "Motion, facial geometry and lip-sync metrics on SwDA-500. Teacher-referenced metrics compare against LOM-generated motion and therefore favour systems that run LOM at inference time. FGD, BC and BC-bi are in x10<sup>-1</sup> units; Diversity is unscaled.",
+      "caption": "Motion, facial geometry and lip-sync metrics on SwDA-500. Teacher-referenced metrics compare against LOM-generated motion and thus favour LOM-based cascades; FGD, BC and BC-bi are in x10<sup>-1</sup> units. Dashes denote values not computed.",
       "cols": [
         "System",
         "Div.",
@@ -608,7 +608,7 @@
       "ours_row": 8
     },
     "human": {
-      "caption": "Exploratory human preference, Motion-Omni-Q7 versus each baseline. Four annotators independently rated 25 paired clips per arm on three motion-related dimensions, with per-pair verdicts by majority vote. Each bar reads left to right as MO wins, ties and losses, over 25 pairs. The final column pools each outcome over the three dimensions and reports the wins-minus-losses margin.",
+      "caption": "Human preference on motion-related dimensions, Motion-Omni-Q7 versus each baseline. Four annotators independently rated 25 paired clips per arm, with per-pair verdicts by majority vote. Each bar reads left to right as MO wins, ties and losses. Bold and underline mark the largest and second-largest pooled wins-minus-losses margin.",
       "cols": [
         "Comparison",
         "R1 Rhythm",
@@ -696,7 +696,8 @@
             23
           ],
           "margin": "+2",
-          "mark": 2
+          "mark": 2,
+          "group": "Same MO speech audio:"
         },
         {
           "name": "MO-audio + EMAGE",
@@ -726,11 +727,7 @@
           "mark": 1
         }
       ],
-      "same_audio_rows": [
-        2,
-        3
-      ],
-      "note": "Rows in blue share the same Motion-Omni speech audio, so differences there reflect the motion pathway alone. The other two arms also differ in speech, so they do not isolate motion. Four annotators on 25 pairs per arm is a small study; the paper reports it as exploratory.",
+      "note": "The two arms under the heading share the same Motion-Omni speech audio, so differences there reflect the motion pathway alone; the other two also differ in speech and so do not isolate motion. Four annotators on 25 pairs per arm is a small study, reported in the paper as exploratory.",
       "legend": {
         "win": "MO wins",
         "tie": "ties",
@@ -825,43 +822,37 @@
       "ours_row": 4
     },
     "data": {
-      "caption": "Per-stage training data of Motion-Omni-Q7.",
+      "caption": "Training data by stage.",
       "cols": [
         "Stage",
         "Samples",
-        "Hours",
-        "Days"
+        "Hours"
       ],
       "rows": [
         [
-          "Stage 1 — ASR",
+          "Stage 1: ASR",
           "1,572,119",
-          "4,295.8",
-          "179.0"
+          "4,295.8"
         ],
         [
-          "Stage 2 — TTS",
+          "Stage 2: TTS",
           "1,642,715",
-          "4,517.0",
-          "188.2"
+          "4,517.0"
         ],
         [
-          "Stage 3 — TTSM",
+          "Stage 3: TTSM",
           "422,856",
-          "1,402.3",
-          "58.4"
+          "1,402.3"
         ],
         [
-          "Stage 4 — Mixture",
+          "Stage 4: Mixture",
           "724,508",
-          "1,929.4",
-          "80.4"
+          "1,929.4"
         ],
         [
           "Total",
           "4,362,198",
-          "12,144.6",
-          "506.0"
+          "12,144.6"
         ]
       ]
     },
